@@ -1,0 +1,9 @@
+https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
+
+  487  apt install python3-flask
+  488  nano web.py 
+  490  python3 web.py 
+  497  apt install python3-flask-flatpages
+  499  apt install python3-flask-restful
+  500  apt install sqlite3
+
