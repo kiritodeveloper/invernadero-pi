@@ -7,3 +7,6 @@ https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
   499  apt install python3-flask-restful
   500  apt install sqlite3
 
+
+http://flask.pocoo.org/docs/1.0/tutorial/layout/
+https://nvie.com/posts/a-successful-git-branching-model/
