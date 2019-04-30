@@ -1,8 +1,9 @@
 DROP TABLE IF EXISTS grupo;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS places;
+DROP TABLE IF EXISTS site;
 DROP TABLE IF EXISTS sensors;
 DROP TABLE IF EXISTS alerts;
+DROP TABLE IF EXISTS invernadero1;
 
 CREATE TABLE grupo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,12 +21,12 @@ CREATE TABLE user (
 );
 INSERT INTO user(username,password,grupo_id) VALUES('admin','admin',1); 
 
-CREATE TABLE places (
+CREATE TABLE site (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
   description TEXT NOT NULL
 );
-INSERT INTO places(name,description) VALUES('invernadero01','Invernadero 1');
+INSERT INTO site(name,description) VALUES('invernadero01','Invernadero 1');
 
 
 CREATE TABLE sensors (
@@ -47,15 +48,16 @@ CREATE TABLE alerts (
 );
 
 
-CREATE TABLE invernadero1 (
+CREATE TABLE sitetableinvernadero1 (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   date datetime, 
   cTemp real, 
   humidity real
 );
-INSERT INTO invernadero1 VALUES('20190405115900','23.9','50.0');
-INSERT INTO invernadero1 VALUES('20190405115910','24.9','60.0');
-INSERT INTO invernadero1 VALUES('20190405115920','25.9','70.0');
-INSERT INTO invernadero1 VALUES('20190405115930','23.9','65.0');
-INSERT INTO invernadero1 VALUES('20190405115940','22.9','50.0');
-INSERT INTO invernadero1 VALUES('20190405115950','21.9','48.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115900','23.9','50.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115910','24.9','60.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115920','25.9','70.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115930','23.9','65.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115940','22.9','50.0');
+INSERT INTO sitetableinvernadero1(date,cTemp,humidity) VALUES('20190405115950','21.9','48.0');
 

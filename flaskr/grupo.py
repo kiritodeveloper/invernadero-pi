@@ -13,12 +13,12 @@ bp = Blueprint('grupo', __name__, url_prefix='/grupo')
 @bp.route('/index')
 def index():
     db = get_db()
-    posts = db.execute(
+    grupos = db.execute(
         'SELECT id, name, description'
         ' FROM grupo'
         ' ORDER BY id DESC'
     ).fetchall()
-    return render_template('grupo/index.html', posts=posts)
+    return render_template('grupo/index.html', grupos=grupos)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -67,7 +67,7 @@ def get_grupo(id):
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    post = get_grupo(id)
+    grupo = get_grupo(id)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -89,7 +89,7 @@ def update(id):
             db.commit()
             return redirect(url_for('grupo.index'))
 
-    return render_template('grupo/update.html', post=post)
+    return render_template('grupo/update.html', grupo=grupo)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))

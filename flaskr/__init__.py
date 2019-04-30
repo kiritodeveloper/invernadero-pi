@@ -40,6 +40,9 @@ def create_app(test_config=None):
     from . import grupo
     app.register_blueprint(grupo.bp)
 
+    from . import site
+    app.register_blueprint(site.bp)
+
 
     return app
 

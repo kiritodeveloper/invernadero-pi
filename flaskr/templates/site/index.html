@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Grupos{% endblock %}</h1>
+  <h1>{% block title %}Lugares{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('grupo.create') }}">Nuevo</a>
+    <a class="action" href="{{ url_for('site.create') }}">Nuevo</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
-  {% for grupo in grupos %}
+  {% for site in sites %}
     <article class="post">
       <header>
         <div>
-          <h1>{{ grupo['name'] }}</h1>
+          <h1>{{ site['name'] }}</h1>
         </div>
         {% if g.user['id'] %}
-          <a class="action" href="{{ url_for('grupo.update', id=grupo['id']) }}">Editar</a>
+          <a class="action" href="{{ url_for('site.update', id=site['id']) }}">Editar</a>
         {% endif %}
       </header>
-      <p class="description">{{ grupo['description'] }}</p>
+      <p class="description">{{ site['description'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>

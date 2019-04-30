@@ -1,20 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Crear Grupo{% endblock %}</h1>
+  <h1>{% block title %}Crear Lugar{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-{% if g.user['id'] %}
-
   <form method="post">
     <label for="name">Nombre</label>
-    <input name="name" id="name" required>
+    <input name="name" id="name" autoocus required>
     <label for="description">Descripci&oacute;n</label>
     <input name="description" id="description" required>
     <input type="submit" value="Register">
   </form>
-{% endif %}
-
 {% endblock %}
-

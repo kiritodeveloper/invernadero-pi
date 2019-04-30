@@ -25,8 +25,24 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
+    #Para borrar las tablas que se crearon en la programacion NOTA: Se puede optimizar el codigo
+    dropstring = []
+    c = db.cursor()
+    #Generando las sentencias SQL de DROP TABLE
+    for row in c.execute(
+        'select "DROP TABLE IF EXISTS " || name || ";" FROM sqlite_master WHERE type = "table" AND name LIKE "sitetable%"'
+    ):
+        dropstring.append( row[0])
+    #Ejecutando las sentencias
+    for row in dropstring:
+        print ("Borrando con %s " % (row))
+        c.execute(row)
+   #Guardando cambios
+    db.commit()
+
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
+    
 
 
 @click.command('init-db')
