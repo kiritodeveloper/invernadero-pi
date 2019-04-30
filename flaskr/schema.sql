@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS grupo;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS site;
-DROP TABLE IF EXISTS sensors;
-DROP TABLE IF EXISTS alerts;
+DROP TABLE IF EXISTS sensor;
+DROP TABLE IF EXISTS alert;
 DROP TABLE IF EXISTS invernadero1;
 
 CREATE TABLE grupo (
@@ -29,16 +29,18 @@ CREATE TABLE site (
 INSERT INTO site(name,description) VALUES('invernadero01','Invernadero 1');
 
 
-CREATE TABLE sensors (
+CREATE TABLE sensor (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT UNIQUE NOT NULL,
-  place_id INTEGER NOT NULL,
-  FOREIGN KEY (place_id) REFERENCES places (id)
+  name TEXT NOT NULL,
+  site_id INTEGER NOT NULL,
+  datatype TEXT NOT NULL,
+  FOREIGN KEY (site_id) REFERENCES site (id),
+  CHECK ( datatype IN ('integer','real','datetime'))
 );
-INSERT INTO sensors(name,place_id) VALUES('temperatura',1);
-INSERT INTO sensors(name,place_id) VALUES('humedad',1);
+INSERT INTO sensor(name,site_id,datatype) VALUES('temperatura',1,'real');
+INSERT INTO sensor(name,site_id,datatype) VALUES('humedad',1,'real');
 
-CREATE TABLE alerts (
+CREATE TABLE alert (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

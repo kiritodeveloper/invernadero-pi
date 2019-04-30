@@ -43,6 +43,10 @@ def create_app(test_config=None):
     from . import site
     app.register_blueprint(site.bp)
 
+    from . import sensor
+    app.register_blueprint(sensor.bp)
+
+
 
     return app
 

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Editar Sensor{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form action="{{ url_for('sensor.delete', id=sensor['id']) }}" method="post">
+    <label for="name">Nombre</label>
+    <input name="name" id="name"
+     value="{{ request.form['name'] or sensor['name'] }}" readonly>
+    <label for="lugar">Lugar</label>
+    <select name="lugar" id="lugar" disabled>
+      {% for lugar in lugares %}
+         {% if lugar['id'] == sensor['site_id'] %}
+         <option value="{{ lugar['id'] }}" selected> {{ lugar['name'] }} </option>
+         {% else %}
+         <option value="{{ lugar['id'] }}"> {{ lugar['name'] }} </option>
+         {% endif %}
+      {% endfor %}
+    </select>
+    <label for="datatype">Tipo</label>
+    <select name="datatype" id="datatype" disabled>
+      {% for datatype in datatypes %}
+         {% if datatype == sensor['datatype'] %}
+         <option value="{{ datatype }}" selected> {{ datatype }} </option>
+         {% else %}
+         <option value="{{ datatype }}"> {{ datatype }} </option>
+         {% endif %}
+      {% endfor %}
+    </select>
+
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Esta seguro?');">
+  </form>
+{% endblock %}
