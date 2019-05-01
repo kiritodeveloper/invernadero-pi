@@ -13,9 +13,19 @@ Este es un proyecto para que utiliza python flask, sqlite3 y highcharts para pod
  flask init-db
  flask run
 ```
+El sistema deberá tener:
+- [X] Administración de usuarios y grupos
+- [X] Administración de lugares (invernaderos) 
+- [X] Administración sensores en cada invernadero
+- [ ] Administración de actuadores determinando sus valores de configuracion
+- [ ] Agregar de alertas via email u otras cosas
+- [X] Graficas de los valores historicos de los sensores
+- [ ] Graficas de los sensores actuales de cada lugar (invernadero)
+
 
 El usuario y clave por defecto son: admin:admin
-Captura de pantalla
+
+
 ![Captura de grafica](https://github.com/neozerosv/invernadero-pi/raw/develop/images/invernadero-pi-grafica-bruto.png)
 
 ## ToDo
