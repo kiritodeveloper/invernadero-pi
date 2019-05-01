@@ -16,7 +16,7 @@ Este es un proyecto para que utiliza python flask, sqlite3 y highcharts para pod
 
 El usuario y clave por defecto son: admin:admin
 Captura de pantalla
-![alt text](https://raw.githubusercontent.com/neozerosv/invernadero-pi/tree/develop/images/invernadero-pi-grafica-bruto.png)
+![Captura de grafica](https://github.com/neozerosv/invernadero-pi/raw/develop/images/invernadero-pi-grafica-bruto.png)
 
 ## ToDo
 - [ ] Mejorar el menu de navegacion
