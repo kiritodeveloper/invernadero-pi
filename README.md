@@ -31,6 +31,7 @@ El usuario y clave por defecto son: admin:admin
 ## ToDo
 - [ ] Mejorar el menu de navegacion
 - [ ] Agrupar los sensores por lugares
+- [ ] Actualizar las gráficas dinamicamente
 - [ ] Veriicar la devolucion de valores nulos
 - [ ] Agregar un modulo de traduccion de interfaz
 - [ ] Hacer widgets de arrastrar para graficas de sensonres
