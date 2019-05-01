@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Dashboard{% endblock %}</h1>
+        <script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
+		<script type="text/javascript">
+  {% for lugar in lugares %}
+  $(function() {
+
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    // Create the chart
+    window.chart = new Highcharts.StockChart({
+        chart: {
+            renderTo: '{{lugar['name']}}',
+            events: {
+                load: function() {
+
+                    // set up the updating of the chart each second
+                    var series = this.series;
+                    setInterval(function() {
+                        for (var i = 0; i < series.length-1; i++) {
+                            
+                            var x = (new Date()).getTime(),
+                                // current time
+                                y = Math.round(Math.random() * 100);
+                           // series[i].addPoint([x, y], true, true);
+                        
+                        }
+                    }, 1000);
+                }
+            }
+        },
+
+        rangeSelector: {
+            buttons: [{
+                count: 1,
+                type: 'minute',
+                text: '1M'},
+            {
+                count: 5,
+                type: 'minute',
+                text: '5M'},
+            {
+                type: 'all',
+                text: 'All'}],
+            inputEnabled: true,
+            selected: 1
+        },
+
+        title: {
+            text: '{{lugar['name']}}'
+        },
+
+        exporting: {
+            enabled: true
+        },
+
+        series: [
+	  {% for sensor in sensores %}
+             {% if sensor['site_id'] == lugar['id'] %}
+
+		{
+            name: '{{sensor['name']}}',
+            data: (function cargajson() {
+		    var result = null;
+		    var data= null;
+		    $.ajax({
+		        async: false,
+		        url: '{{ url_for('dashboard.datajson', id=lugar['id'], sensor=sensor['id']) }}',
+		        data: {data},
+		        dataType: "json",
+		        success: function(data){
+		            result = data;
+		        }
+		    });
+		    return result;
+            }
+	    )()},
+	  {% endif %}
+        {% endfor %}
+	]
+    });
+
+});
+  {% endfor %}
+
+		</script>
+
+{% endblock %}
+
+{% block content %}
+
+<script src="{{ url_for('static', filename='highstock.js') }}"></script>
+<script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+<script src="{{ url_for('static', filename='exporting.js') }}"></script>
+  {% for lugar in lugares %}
+    <div id="{{lugar['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  {% endfor %}
+
+
+
+{% endblock %}
