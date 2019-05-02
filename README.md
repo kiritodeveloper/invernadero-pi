@@ -1,5 +1,5 @@
 
-Este es un proyecto para que utiliza python flask, sqlite3 y highcharts para poder visualizar y configurar sensores en arduinos.
+Este es un proyecto que utiliza python flask, sqlite3 y highcharts para poder visualizar y configurar sensores en arduinos.
 
 ## Instrucciones ejecutarlo en  debian
 
