@@ -28,6 +28,23 @@ def index():
     return render_template('site/index.html', sites=sites, sensores=sensores)
 
 
+#Muestra las graficas de un lugar
+@bp.route('/<int:id>/graph', methods=('GET', 'POST'))
+@login_required
+def graph(id):
+    lugar = get_site(id)
+
+    db = get_db()
+    sensores = db.execute(
+        'SELECT id, name, site_id, unit, min, max'
+        ' FROM sensor WHERE site_id='+str(lugar['id'])+
+        ' ORDER BY id DESC'
+    ).fetchall()
+
+    return render_template('site/graph.html', lugar=lugar, sensores=sensores)
+
+
+
 @bp.route('/create', methods=('GET', 'POST'))
 def create():
     if request.method == 'POST':
