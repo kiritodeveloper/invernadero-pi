@@ -18,7 +18,14 @@ def index():
         ' FROM site'
         ' ORDER BY id DESC'
     ).fetchall()
-    return render_template('site/index.html', sites=sites)
+
+    sensores = db.execute(
+        'SELECT id, name, site_id'
+        ' FROM sensor'
+        ' ORDER BY id DESC'
+    ).fetchall()
+
+    return render_template('site/index.html', sites=sites, sensores=sensores)
 
 
 @bp.route('/create', methods=('GET', 'POST'))

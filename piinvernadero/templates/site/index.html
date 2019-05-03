@@ -19,6 +19,16 @@
         {% endif %}
       </header>
       <p class="description">{{ site['description'] }}</p>
+      <div id="sensores">
+         <ul>
+         {% for sensor in sensores %}
+           {% if sensor and sensor['site_id'] == site['id'] %}
+            <li><a class="action" href="{{ url_for('sensor.update', id=sensor['id']) }}">{{ sensor['name'] }}</a></li>
+	   {% endif %}
+         {% endfor %}
+         </ul>
+      </div>
+
     </article>
     {% if not loop.last %}
       <hr>

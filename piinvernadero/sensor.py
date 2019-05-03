@@ -11,6 +11,8 @@ from flaskr.db import get_db
 bp = Blueprint('sensor', __name__, url_prefix='/sensor')
 datatypes = ["integer","real","datetime"]
 
+
+#Muestra los sensores con todos sus datos listados
 @bp.route('/index')
 def index():
     db = get_db()
@@ -21,7 +23,23 @@ def index():
     ).fetchall()
     return render_template('sensor/index.html', sensors=sensors)
 
+#Muestra la grafica de un sensor
+@bp.route('/<int:id>/graph', methods=('GET', 'POST'))
+@login_required
+def graph(id):
+    sensor = get_sensor(id)
 
+    db = get_db()
+    lugar = db.execute(
+        'SELECT id, name, description'
+        ' FROM site WHERE id='+str(sensor['site_id'])+
+        ' ORDER BY id DESC'
+    ).fetchone()
+
+    return render_template('sensor/graph.html', lugar=lugar, sensor=sensor)
+
+
+#Crea un sensor
 @bp.route('/create', methods=('GET', 'POST'))
 def create():
 
@@ -76,6 +94,7 @@ def create():
     return render_template('sensor/crear.html',lugares=lugares, datatypes=datatypes)
 
 
+#Obtiene datos de un sensor
 def get_sensor(id):
     sensor = get_db().execute(
         'SELECT id, name, site_id, datatype, unit, min, max'
@@ -89,6 +108,7 @@ def get_sensor(id):
 
     return sensor
 
+#Actualiza (solo Borra) un sensor
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
@@ -105,6 +125,7 @@ def update(id):
     return render_template('sensor/update.html', sensor=sensor,lugares=lugares,datatypes=datatypes)
 
 
+#Borra un sensor y su columna asignada
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
