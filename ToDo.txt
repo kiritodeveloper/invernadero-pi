@@ -1,3 +1,0 @@
-1. Agrupar la lista de los sensores por lugares
-2. Hacer que las graficas generadas por highcharts sean dinamicas.
-
