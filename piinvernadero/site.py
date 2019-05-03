@@ -16,13 +16,13 @@ def index():
     sites = db.execute(
         'SELECT id, name, description'
         ' FROM site'
-        ' ORDER BY id DESC'
+        ' ORDER BY id ASC'
     ).fetchall()
 
     sensores = db.execute(
         'SELECT id, name, site_id'
         ' FROM sensor'
-        ' ORDER BY id DESC'
+        ' ORDER BY id ASC'
     ).fetchall()
 
     return render_template('site/index.html', sites=sites, sensores=sensores)
@@ -124,9 +124,19 @@ def delete(id):
     #Obtenemos los campos de los datos que queremos eliminar
     site = get_site(id)
     db = get_db()
-    #Borramos el reistro de la tabla site
-    db.execute('DELETE FROM site WHERE id = ?', (id,))
-    #Buscamos la tabla para eliminarla
-    db.execute('DROP TABLE sitetable'+site[1])
-    db.commit()
+
+    error = None
+    if db.execute(
+            'SELECT id FROM sensor WHERE  site_id = ?', (id)
+        ).fetchone() is not None:
+            error = 'El lugar {} aun tiene asociados sensores.'.format(site[1])
+    if error is None:
+        #Borramos todos los sensores que pertenezcan al lugar
+        #db.execute('DELETE FROM sensor WHERE site_id = ?', (id,))
+        #Borramos el reistro de la tabla site
+        db.execute('DELETE FROM site WHERE id = ?', (id,))
+        #Buscamos la tabla para eliminarla
+        db.execute('DROP TABLE sitetable'+site[1])
+        db.commit()
+    flash(error)
     return redirect(url_for('site.index'))
