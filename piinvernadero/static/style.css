@@ -3,11 +3,11 @@ body { max-width: 960px; margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
 a { color: #377ba8; }
 hr { border: none; border-top: 1px solid lightgray; }
-nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
+/*nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
 nav h1 { flex: auto; margin: 0; }
 nav h1 a { text-decoration: none; padding: 0.25rem 0.5rem; }
 nav ul  { display: flex; list-style: none; margin: 0; padding: 0; }
-nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
+nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }*/
 .content { padding: 0 1rem 1rem; }
 .content > header { border-bottom: 1px solid lightgray; display: flex; align-items: flex-end; }
 .content > header h1 { flex: auto; margin: 1rem 0 0.25rem 0; }
@@ -24,3 +24,23 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
+
+nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
+nav h1 { flex: auto; margin: 0; }
+nav h1 a { text-decoration: none; padding: 0.25rem 0.5rem; }
+nav ul  { display: flex; list-style: none; margin: 0; padding: 0; }
+nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
+
+
+/*Para el menu*/
+nav ul { list-style-type: none; margin: 0; padding: 0; overflow: hidden; background-color: #a6b9be;}
+nav ul li { float: left;}
+nav ul li a { display: block; color: black; text-align: center; padding: 14px 16px; text-decoration: none;}
+nav ul li a:hover { background-color: #86a8b2;}
+
+/* Para el listado tipo tabla*/
+#content-body-wrapper { display:table; border-collapse:collapse;}
+#content-body { display:table-row;}
+#primero, #segundo, #tercero, #cuarto, #quinto, #sexto #septimo { display:table-cell;}
+#primero, #segundo, #tercero, #cuarto, #quinto, #sexto #septimo { width:20%;}
+/*#tercero, #cuarto, #quinto, #sexto #septimo{ width:60%;}*/

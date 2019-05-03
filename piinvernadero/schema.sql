@@ -36,13 +36,16 @@ CREATE TABLE sensor (
   name TEXT NOT NULL,
   site_id INTEGER NOT NULL,
   datatype TEXT NOT NULL,
+  unit TEXT NOT NULL,
+  min real NOT NULL,
+  max real NOT NULL,
   FOREIGN KEY (site_id) REFERENCES site (id),
   CHECK ( datatype IN ('integer','real','datetime'))
 );
-INSERT INTO sensor(name,site_id,datatype) VALUES('cTemp',1,'real');
-INSERT INTO sensor(name,site_id,datatype) VALUES('humidity',1,'real');
-INSERT INTO sensor(name,site_id,datatype) VALUES('cTemp',2,'real');
-INSERT INTO sensor(name,site_id,datatype) VALUES('humedad',2,'real');
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',1,'real','&deg;C',0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humidity',1,'real','%',0,100);
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',2,'real','&deg;C',0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humedad',2,'real','%',0,100);
 
 CREATE TABLE alert (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

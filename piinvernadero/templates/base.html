@@ -9,7 +9,6 @@
   <h1>Invernalio</h1>
   <ul>
     {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
       <li><a href="{{ url_for('grupo.index') }}">Grupos</a>
       <li><a href="{{ url_for('site.index') }}">Lugares</a>
       <li><a href="{{ url_for('sensor.index') }}">Sensores</a>
@@ -19,6 +18,7 @@
       <li><a href="{{ url_for('auth.login') }}">Log In</a>
     {% endif %}
   </ul>
+  <span>{{ g.user['username'] }}</span>
 </nav>
 <section class="content">
   <header>

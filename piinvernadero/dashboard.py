@@ -29,6 +29,39 @@ def index():
     ).fetchall()
     return render_template('dashboard/index.html', sensores=sensores,lugares=lugares)
 
+@bp.route('/actual')
+def actual():
+    db = get_db()
+    sensores = db.execute(
+            'SELECT id, name, site_id'
+        ' FROM sensor '
+        ' ORDER BY id ASC'
+    ).fetchall()
+    lugares = db.execute(
+            'SELECT id, name'
+        ' FROM site '
+        ' ORDER BY id ASC'
+    ).fetchall()
+    return render_template('dashboard/actual.html', sensores=sensores,lugares=lugares)
+
+
+@bp.route('/<int:id>/<int:sensor>/gaugejson')
+def gaugejson(id,sensor):
+    db = get_db()
+
+    tabla = db.execute('SELECT name FROM site WHERE id='+str(id)).fetchone()
+    namesensor = db.execute('SELECT name FROM sensor WHERE id='+str(sensor)).fetchone()
+    #Falta mandar error cuando no encuentra el sensor
+    resultado = db.execute(
+            'SELECT '+namesensor['name']+
+            ' FROM sitetable'+tabla['name']+
+        ' ORDER BY date DESC LIMIT 1'
+    ).fetchone()
+    print (resultado[namesensor['name']])
+    return str(resultado[namesensor['name']])
+
+
+
 @bp.route('/<int:id>/<int:sensor>/datajson')
 def datajson(id,sensor):
     db = get_db()

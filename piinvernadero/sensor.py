@@ -15,7 +15,7 @@ datatypes = ["integer","real","datetime"]
 def index():
     db = get_db()
     sensors = db.execute(
-            'SELECT se.id as id, se.name as name, site_id, si.name as sname'
+            'SELECT se.id as id, se.name as name, site_id, si.name as sname, unit, min, max'
         ' FROM sensor se JOIN site si ON se.site_id = si.id'
         ' ORDER BY se.id DESC'
     ).fetchall()
@@ -37,11 +37,20 @@ def create():
         name = request.form['name']
         lugar = request.form['lugar']
         datatype = request.form['datatype']
+        unit = request.form['unit']
+        min = request.form['min']
+        max = request.form['max']
         db = get_db()
         error = None
 
         if not name:
             error = 'El nombre del sensor es requerido.'
+        elif not unit:
+              error = 'La unidad del sensor es requerido'
+        elif not min:
+              error = 'El sensor debe tener un valor mínimo'
+        elif not max:
+              error = 'El sensor debe tener un valor máximo'
         elif (' ' in name):
               error = 'El nombre no debe llevar espacios'
         elif db.execute(
@@ -51,8 +60,8 @@ def create():
 
         if error is None:
             db.execute(
-                'INSERT INTO sensor (name, site_id,datatype) VALUES (?, ?, ?)',
-                (name, lugar, datatype)
+                'INSERT INTO sensor (name, site_id,datatype) VALUES (?, ?, ?,?,?,?)',
+                (name, lugar, datatype,unit,min,max)
             )
             lugarnombre = db.execute('SELECT name FROM site WHERE id = ? ', (lugar)).fetchone()
             db.execute (
@@ -69,7 +78,7 @@ def create():
 
 def get_sensor(id):
     sensor = get_db().execute(
-        'SELECT id, name, site_id, datatype'
+        'SELECT id, name, site_id, datatype, unit, min, max'
         ' FROM sensor '
         ' WHERE id = ?',
         (id,)

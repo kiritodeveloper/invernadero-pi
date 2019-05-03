@@ -51,9 +51,11 @@
 		    // the value axis
 		    yAxis: {
 		        stops: [
-		            [0.1, '#55BF3B'], // green
-		            [0.7, '#DDDF0D'], // yellow
-		            [0.9, '#DF5353'] // red
+
+		            [0.2, '#27C5F0'], // cyan
+		            [0.4, '#55BF3B'], // green
+		            [0.6, '#DDDF0D'], // yellow
+		            [0.6, '#DF5353'] // red
 		        ],
 		        lineWidth: 0,
 		        minorTickInterval: null,
@@ -80,8 +82,8 @@
 		// The speed gauge
 		var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
 		    yAxis: {
-		        min: -10,
-		        max: 45,
+		        min: 0,
+		        max: 48,
 		        title: {
 		            text: 'Temperatura'
 		        }
