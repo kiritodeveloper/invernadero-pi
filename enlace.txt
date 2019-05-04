@@ -10,3 +10,4 @@ https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
 
 http://flask.pocoo.org/docs/1.0/tutorial/layout/
 https://nvie.com/posts/a-successful-git-branching-model/
+http://flask.pocoo.org/docs/1.0/patterns/celery/

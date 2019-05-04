@@ -20,7 +20,7 @@ def index():
     sensors = db.execute(
             'SELECT se.id as id, se.name as name, site_id, si.name as sname, unit, min, max'
         ' FROM sensor se JOIN site si ON se.site_id = si.id'
-        ' ORDER BY se.id DESC'
+        ' ORDER BY si.id,se.id ASC'
     ).fetchall()
     return render_template('sensor/index.html', sensors=sensors)
 
@@ -77,8 +77,9 @@ def create():
             'SELECT id FROM sensor WHERE name = ? AND site_id = ?', (name,lugar)
         ).fetchone() is not None:
             error = 'El sensor {} ya existe.'.format(name)
-
-        if error is None:
+        if error is not None:
+            flash(error)
+        else:
             db.execute(
                 'INSERT INTO sensor (name, site_id,datatype,unit,min,max) VALUES (?, ?, ?, ?, ?, ?)',
                 (name, lugar, datatype, unit, min, max)
@@ -89,10 +90,6 @@ def create():
             )
             db.commit()
             return redirect(url_for('sensor.index'))
-
-        flash(error)
-
-
     return render_template('sensor/crear.html',lugares=lugares, datatypes=datatypes)
 
 
@@ -133,46 +130,55 @@ def update(id):
 def delete(id):
     #Obtenemos los campos de los datos que queremos eliminar
     sensor = get_sensor(id)
-   
+    
     db = get_db()
+    error = None
+
+    if db.execute(
+            'SELECT id FROM actuator WHERE sensor_id = '+str(id)
+        ).fetchone() is not None:
+            error = 'El sensor {} tiene actuadores asociados. Debe borrar los actuadores asociados antes de borrar.'.format(sensor['name'])
+    if error is not None:
+            flash(error)
+    else:
+        #Para borrar el sensor, necesitamos borrar la columna de la tabla sitetable"lugarr"
+        #Para ello renombramos la tabla, creamos de nuevo la tabla sin la columna a borrar
+        #pasamos los datos y borramos la tabla temporal y borramos el registro en la tabla sensor
+        tablatemporal='temporal'
+        tabla = db.execute('SELECT name FROM site WHERE id='+str(sensor['site_id'])).fetchone()
+        columnas = db.execute('SELECT name, datatype FROM sensor WHERE site_id='+str(sensor['site_id']))
+
+        #Renombramos la tabla actual a una temporal
+        print ('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
+        db.execute('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
+
+        #Creamos la tabla inicial
+        print ('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
+        db.execute('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
+
+        campos = ''
+        for columna in columnas:
+            if columna['name'] != sensor['name']:
+                #Recreamos las columnas en la nueva tabla, menos la que se va a borrar
+                print('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
+                db.execute('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
+                campos =campos+columna['name']+','
+        #Quitamos la ultima coma de la lista de columnas
+        campos=campos[:-1]
+
+        #insertamos los campos de la tabla anterior a la nueva
+        if campos != '':
+            print('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
+            db.execute('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
+
+        #Borramos el reistro de la tabla sensor
+        print('DELETE FROM sensor WHERE id = ?', (id,))
+        db.execute('DELETE FROM sensor WHERE id = ?', (id,))
+
+        #Borramos la tabla temporal
+        print('DROP TABLE '+tablatemporal)
+        db.execute('DROP TABLE '+tablatemporal)
     
-    #Para borrar el sensor, necesitamos borrar la columna de la tabla sitetable"lugarr"
-    #Para ello renombramos la tabla, creamos de nuevo la tabla sin la columna a borrar
-    #pasamos los datos y borramos la tabla temporal y borramos el registro en la tabla sensor
-    tablatemporal='temporal'
-    tabla = db.execute('SELECT name FROM site WHERE id='+str(sensor['site_id'])).fetchone()
-    columnas = db.execute('SELECT name, datatype FROM sensor WHERE site_id='+str(sensor['site_id']))
-
-    #Renombramos la tabla actual a una temporal
-    print ('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
-    db.execute('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
-
-    #Creamos la tabla inicial
-    print ('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
-    db.execute('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
-
-    campos = ''
-    for columna in columnas:
-        if columna['name'] != sensor['name']:
-            #Recreamos las columnas en la nueva tabla, menos la que se va a borrar
-            print('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
-            db.execute('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
-            campos =campos+columna['name']+','
-    #Quitamos la ultima coma de la lista de columnas
-    campos=campos[:-1]
-
-    #insertamos los campos de la tabla anterior a la nueva
-    if campos != '':
-        print('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
-        db.execute('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
-
-    #Borramos el reistro de la tabla sensor
-    print('DELETE FROM sensor WHERE id = ?', (id,))
-    db.execute('DELETE FROM sensor WHERE id = ?', (id,))
-
-    #Borramos la tabla temporal
-    print('DROP TABLE '+tablatemporal)
-    db.execute('DROP TABLE '+tablatemporal)
-    
-    db.commit()
+        db.commit()
+        
     return redirect(url_for('sensor.index'))

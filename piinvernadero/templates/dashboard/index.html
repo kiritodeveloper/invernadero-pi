@@ -115,7 +115,7 @@
 		      <input  id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}" 
 		              type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
                       <span class="slider round"></span>
-              </label>{{ actuator['status'] }}
+              </label>
         </div>
 
     {% elif index['actuador'] % 3 == 1  %}
@@ -126,7 +126,7 @@
                       <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
 		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
                       <span class="slider round"></span>
-              </label>{{ actuator['status'] }}
+              </label>
          </div>
     {% else %}
          <div id="tercero" >
@@ -136,7 +136,7 @@
                       <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
 		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
                       <span class="slider round"></span>
-              </label>{{ actuator['status'] }}
+              </label>
          </div>
     {% endif %} 
     {% set _ = index.update({'actuador':index['actuador']+1}) %}

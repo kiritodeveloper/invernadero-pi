@@ -58,8 +58,8 @@ CREATE TABLE actuator (
 );
 INSERT INTO actuator(name,status,sensor_id) VALUES('aspersor',1,1);
 INSERT INTO actuator(name,status,sensor_id) VALUES('ventilador',0,1);
-INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula',0,1);
-INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula2',0,2);
+INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula',0,2);
+INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula2',0,4);
 
 
 
