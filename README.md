@@ -20,7 +20,8 @@ El sistema deberá tener:
 - [ ] Administración de actuadores determinando sus valores de configuracion
 - [ ] Agregar de alertas via email u otras cosas
 - [X] Graficas de los valores historicos de los sensores
-- [ ] Graficas de los sensores actuales de cada lugar (invernadero)
+- [X] Graficas de los sensores actuales de cada lugar (invernadero)
+- [ ] Modificar el dashboard para agregar sensores seleccionados por el usuario
 
 
 El usuario y clave por defecto son: admin:admin
@@ -30,8 +31,8 @@ El usuario y clave por defecto son: admin:admin
 
 ## ToDo
 - [ ] Mejorar el menu de navegacion
-- [ ] Agrupar los sensores por lugares
+- [X] Agrupar los sensores por lugares
 - [ ] Actualizar las gráficas dinamicamente
-- [ ] Veriicar la devolucion de valores nulos
+- [ ] Verificar la devolucion de valores nulos
 - [ ] Agregar un modulo de traduccion de interfaz
 - [ ] Hacer widgets de arrastrar para graficas de sensonres

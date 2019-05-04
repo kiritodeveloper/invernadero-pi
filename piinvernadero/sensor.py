@@ -5,8 +5,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from piinvernadero.auth import login_required
+from piinvernadero.db import get_db
 
 bp = Blueprint('sensor', __name__, url_prefix='/sensor')
 datatypes = ["integer","real","datetime"]
@@ -14,6 +14,7 @@ datatypes = ["integer","real","datetime"]
 
 #Muestra los sensores con todos sus datos listados
 @bp.route('/index')
+@login_required
 def index():
     db = get_db()
     sensors = db.execute(
@@ -41,6 +42,7 @@ def graph(id):
 
 #Crea un sensor
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
 
     db = get_db()
@@ -78,8 +80,8 @@ def create():
 
         if error is None:
             db.execute(
-                'INSERT INTO sensor (name, site_id,datatype) VALUES (?, ?, ?,?,?,?)',
-                (name, lugar, datatype,unit,min,max)
+                'INSERT INTO sensor (name, site_id,datatype,unit,min,max) VALUES (?, ?, ?, ?, ?, ?)',
+                (name, lugar, datatype, unit, min, max)
             )
             lugarnombre = db.execute('SELECT name FROM site WHERE id = ? ', (lugar)).fetchone()
             db.execute (
@@ -142,27 +144,34 @@ def delete(id):
     columnas = db.execute('SELECT name, datatype FROM sensor WHERE site_id='+str(sensor['site_id']))
 
     #Renombramos la tabla actual a una temporal
+    print ('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
     db.execute('ALTER TABLE sitetable'+tabla['name']+' RENAME TO '+tablatemporal)
 
     #Creamos la tabla inicial
+    print ('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
     db.execute('CREATE TABLE sitetable'+tabla['name']+'( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )')
 
     campos = ''
     for columna in columnas:
         if columna['name'] != sensor['name']:
             #Recreamos las columnas en la nueva tabla, menos la que se va a borrar
+            print('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
             db.execute('ALTER TABLE sitetable'+tabla['name']+' ADD COLUMN '+columna['name']+' '+columna['datatype'])
             campos =campos+columna['name']+','
     #Quitamos la ultima coma de la lista de columnas
     campos=campos[:-1]
 
     #insertamos los campos de la tabla anterior a la nueva
-    db.execute('INSERT INTO sitetable'+tabla['name']+' SELECT id,'+campos+' FROM '+tablatemporal)
+    if campos != '':
+        print('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
+        db.execute('INSERT INTO sitetable'+tabla['name']+' SELECT id,date,'+campos+' FROM '+tablatemporal)
 
     #Borramos el reistro de la tabla sensor
+    print('DELETE FROM sensor WHERE id = ?', (id,))
     db.execute('DELETE FROM sensor WHERE id = ?', (id,))
 
     #Borramos la tabla temporal
+    print('DROP TABLE '+tablatemporal)
     db.execute('DROP TABLE '+tablatemporal)
     
     db.commit()

@@ -8,17 +8,18 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from piinvernadero.auth import login_required
+from piinvernadero.db import get_db
 
 bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 datatypes = ["integer","real","datetime"]
 
 @bp.route('/index')
+@login_required
 def index():
     db = get_db()
     sensores = db.execute(
-            'SELECT id, name, site_id'
+        'SELECT id, name, site_id, unit, min, max'
         ' FROM sensor '
         ' ORDER BY id ASC'
     ).fetchall()
@@ -27,9 +28,13 @@ def index():
         ' FROM site '
         ' ORDER BY id ASC'
     ).fetchall()
+
+    #print (*lugares,sep = ", ")
+    print (lugares[0]['id'])
     return render_template('dashboard/index.html', sensores=sensores,lugares=lugares)
 
 @bp.route('/actual')
+@login_required
 def actual():
     db = get_db()
     sensores = db.execute(
@@ -46,6 +51,7 @@ def actual():
 
 
 @bp.route('/<int:id>/<int:sensor>/gaugejson')
+@login_required
 def gaugejson(id,sensor):
     db = get_db()
 
@@ -57,19 +63,20 @@ def gaugejson(id,sensor):
             ' FROM sitetable'+tabla['name']+
         ' ORDER BY date DESC LIMIT 1'
     ).fetchone()
-    print (resultado[namesensor['name']])
+    #print (resultado[namesensor['name']])
     return str(resultado[namesensor['name']])
 
 
 
 @bp.route('/<int:id>/<int:sensor>/datajson')
+@login_required
 def datajson(id,sensor):
     db = get_db()
 
 
     tabla = db.execute('SELECT name FROM site WHERE id='+str(id)).fetchone()
     namesensor = db.execute('SELECT name FROM sensor WHERE id='+str(sensor)).fetchone()
-    print (namesensor['name'])
+    #print (namesensor['name'])
     #Falta mandar error cuando no encuentra el sensor
     resultados = db.execute(
             'SELECT date,'+namesensor['name']+
@@ -93,6 +100,7 @@ def datajson(id,sensor):
 
 
 @bp.route("/graph")
+@login_required
 def graph():
     templateData = {
         'grafica' : grafica

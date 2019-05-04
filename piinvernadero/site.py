@@ -5,12 +5,13 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from piinvernadero.auth import login_required
+from piinvernadero.db import get_db
 
 bp = Blueprint('site', __name__, url_prefix='/site')
 
 @bp.route('/index')
+@login_required
 def index():
     db = get_db()
     sites = db.execute(
@@ -46,6 +47,7 @@ def graph(id):
 
 
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     if request.method == 'POST':
         name = request.form['name']
@@ -79,7 +81,6 @@ def create():
 
 
     return render_template('site/crear.html')
-
 
 def get_site(id):
     site = get_db().execute(
@@ -127,7 +128,7 @@ def delete(id):
 
     error = None
     if db.execute(
-            'SELECT id FROM sensor WHERE  site_id = ?', (id)
+            'SELECT id FROM sensor WHERE  site_id = '+str(id)
         ).fetchone() is not None:
             error = 'El lugar {} aun tiene asociados sensores.'.format(site[1])
     if error is None:
@@ -138,5 +139,6 @@ def delete(id):
         #Buscamos la tabla para eliminarla
         db.execute('DROP TABLE sitetable'+site[1])
         db.commit()
+        return redirect(url_for('site.index'))
     flash(error)
     return redirect(url_for('site.index'))

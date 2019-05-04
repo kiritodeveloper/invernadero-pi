@@ -5,12 +5,13 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from piinvernadero.auth import login_required
+from piinvernadero.db import get_db
 
 bp = Blueprint('grupo', __name__, url_prefix='/grupo')
 
 @bp.route('/index')
+@login_required
 def index():
     db = get_db()
     grupos = db.execute(
@@ -22,6 +23,7 @@ def index():
 
 
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     if request.method == 'POST':
         name = request.form['name']
