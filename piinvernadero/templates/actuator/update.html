@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Editar Actuador{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if g.user['id'] %}
+
+  <form method="post">
+    <label for="name">Nombre</label>
+    <input name="name" id="name" 
+    value="{{ request.form['name'] or actuator['name'] }}" required>
+    <label for="sensor_id">Sensor</label>
+    <select name="sensor_id" id="sensor_id" >
+      {% for sensor in sensores %}
+         {% if actuator['sensor_id'] == sensor['id'] %}
+           <option value="{{ sensor['id'] }}" selected> {{sensor['site']}}-{{sensor['name']}} </option>
+         {% else %}
+           <option value="{{ sensor['id'] }}"> {{sensor['site']}}-{{sensor['name']}} </option>
+         {% endif %}
+      {% endfor %}
+    </select>
+    <label class="switch">
+          <input name="status" id="status" type="checkbox" {%- if actuator['status'] -%} checked {% endif %}>
+          <span class="slider round"></span>
+     </label>{{ actuator['status'] }}
+    <input type="submit" value="Save">
+  </form>
+    <hr>
+  <form action="{{ url_for('actuator.delete', id=actuator['id']) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Esta seguro?');">
+  </form>
+
+{% endif %}
+
+{% endblock %}
+

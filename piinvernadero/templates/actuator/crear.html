@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Agregar Actuador{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if g.user['id'] %}
+
+  <form method="post">
+    <label for="name">Nombre</label>
+    <input name="name" id="name" required>
+    <label for="sensor_id">Sensor</label>
+    <select name="sensor_id" id="sensor_id" >
+      {% for sensor in sensores %}
+         <option value="{{ sensor['id'] }}"> {{sensor['site']}}-{{sensor['name']}} </option>
+      {% endfor %}
+    </select>
+
+    <input type="submit" value="Register">
+  </form>
+{% endif %}
+
+{% endblock %}
+

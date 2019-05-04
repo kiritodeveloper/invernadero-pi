@@ -49,12 +49,11 @@ INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humedad',2,'real'
 
 CREATE TABLE actuator (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
+  name UNIQUE TEXT NOT NULL,
   status INTEGER NOT NULL,
   sensor_id  INTEGER NOT NULL,
   FOREIGN KEY (sensor_id) REFERENCES sensor (id),
   CHECK ( status IN (0,1))
-
 );
 INSERT INTO actuator(name,status,sensor_id) VALUES('aspersor',1,1);
 INSERT INTO actuator(name,status,sensor_id) VALUES('ventilador',0,1);

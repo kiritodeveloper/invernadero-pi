@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Actuadores{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('actuator.create') }}">Nuevo</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  <div id="content-body-wrapper">
+      <div id="primero"> <h1></h1> </div>
+      <div id="segundo"><h4>Estado</h4></div>
+      <div id="tercero"><h4>id Sensor</h4></div>
+      <div id="cuarto"><h4>Sensor</h3></div>
+      <div id="quinto"><h4>Lugar</h4></div>
+
+  {% for actuator in actuators %}
+    <div id="content-body">
+      <div id="primero"> <h1><a class="action" href="{{ url_for('sensor.graph',id=actuator['id']) }}">{{ actuator['name'] }}</a></h1> </div>
+      <div id="segundo">
+	      <label class="switch"> 
+		      <input type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled> 
+		      <span class="slider round"></span>
+	      </label>{{ actuator['status'] }}
+      </div>
+      <div id="tercero">{{ actuator['sensor_id'] }}</div>
+      <div id="cuarto">{{ actuator['sensor'] }}</div>
+      <div id="quinto">{{ actuator['site'] }}</div>
+    {% if g.user['id'] %}
+      <div id="sexto">    <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">Editar</a> </div>
+    {% endif %}
+    </div>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+
+
+{% endblock %}

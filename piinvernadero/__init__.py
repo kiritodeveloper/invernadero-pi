@@ -46,9 +46,12 @@ def create_app(test_config=None):
     from . import sensor
     app.register_blueprint(sensor.bp)
 
+
     from . import dashboard
     app.register_blueprint(dashboard.bp)
 
+    from . import actuator
+    app.register_blueprint(actuator.bp)
 
     return app
 
