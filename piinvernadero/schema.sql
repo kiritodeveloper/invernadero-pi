@@ -47,6 +47,22 @@ INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humidity',1,'real
 INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',2,'real','&deg;C',0,45);
 INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humedad',2,'real','%',0,100);
 
+CREATE TABLE actuator (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  status INTEGER NOT NULL,
+  sensor_id  INTEGER NOT NULL,
+  FOREIGN KEY (sensor_id) REFERENCES sensor (id),
+  CHECK ( status IN (0,1))
+
+);
+INSERT INTO actuator(name,status,sensor_id) VALUES('aspersor',1,1);
+INSERT INTO actuator(name,status,sensor_id) VALUES('ventilador',0,1);
+INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula',0,1);
+INSERT INTO actuator(name,status,sensor_id) VALUES('electroValvula2',0,2);
+
+
+
 CREATE TABLE alert (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
