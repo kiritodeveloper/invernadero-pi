@@ -22,7 +22,7 @@ El sistema deberá tener:
 - [X] Graficas de los valores historicos de los sensores
 - [X] Graficas de los sensores actuales de cada lugar (invernadero)
 - [ ] Modificar el dashboard para agregar sensores seleccionados por el usuario
-
+- [ ] Integracion con las lecturas de los luagares
 
 El usuario y clave por defecto son: admin:admin
 

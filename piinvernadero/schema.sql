@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS grupo;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS site;
 DROP TABLE IF EXISTS sensor;
+DROP TABLE IF EXISTS actuator;
 DROP TABLE IF EXISTS alert;
 DROP TABLE IF EXISTS invernadero1;
 
@@ -42,14 +43,14 @@ CREATE TABLE sensor (
   FOREIGN KEY (site_id) REFERENCES site (id),
   CHECK ( datatype IN ('integer','real','datetime'))
 );
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',1,'real','&deg;C',0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',1,'real','°C',0,45);
 INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humidity',1,'real','%',0,100);
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',2,'real','&deg;C',0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',2,'real','°C',0,45);
 INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humedad',2,'real','%',0,100);
 
 CREATE TABLE actuator (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name UNIQUE TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   status INTEGER NOT NULL,
   sensor_id  INTEGER NOT NULL,
   FOREIGN KEY (sensor_id) REFERENCES sensor (id),
@@ -106,5 +107,5 @@ INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120110','2
 INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120130','24','42.1');
 INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120230','22','40.1');
 INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120250','23','41.1');
-INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120350','19','60.1');
+INSERT INTO sitetableinvernadero2(date,cTemp,humedad) VALUES('20190406120355','17','55.1');
 

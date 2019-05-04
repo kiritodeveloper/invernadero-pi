@@ -23,7 +23,6 @@ def index():
         ' FROM sensor '
         ' ORDER BY id ASC'
     ).fetchall()
-    boxwidth=100*len(sensores)+(len(sensores)%2)*100
     lugares = db.execute(
         'SELECT id, name'
         ' FROM site '
@@ -39,8 +38,8 @@ def index():
 
 
     #print (*lugares,sep = ", ")
-    print (lugares[0]['id'])
-    return render_template('dashboard/index.html', sensores=sensores,boxwidth=boxwidth,lugares=lugares, actuators=actuators)
+    #print (lugares[0]['id'])
+    return render_template('dashboard/index.html', sensores=sensores,lugares=lugares, actuators=actuators)
 
 @bp.route('/actual')
 @login_required

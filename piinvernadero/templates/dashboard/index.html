@@ -10,7 +10,7 @@
         <script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
         <script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
         <style type="text/css">
-           .outer {width: 600px;height: {{ boxwidth }}px;margin: 0 auto;}
+           .outer {width: 600px;height: {{ sensores|length*100+(sensores|length % 2)*100  }}px;margin: 0 auto;}
           .outer .chart-container {width: 300px;float: left;height: 200px;}
           .highcharts-yaxis-grid .highcharts-grid-line {display: none;}
           @media (max-width: 600px) {
@@ -106,8 +106,8 @@
 
   <h3>Actuadores</h3>
   {% for actuator in actuators %}
+    {% if index['actuador'] == 0 or index['actuador'] % 3 == 0 %} <div id="content-body"> {% endif %}
     {% if index['actuador'] % 3 == 0  %}
-      <div id="content-body">
         <div id="primero" >
 		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
 				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
@@ -138,9 +138,9 @@
                       <span class="slider round"></span>
               </label>{{ actuator['status'] }}
          </div>
-      </div>
-    {% endif %}
+    {% endif %} 
     {% set _ = index.update({'actuador':index['actuador']+1}) %}
+    {% if index['actuador'] == actuators|length or (index['actuador']-1) % 3 == 2 %} </div> {% endif %}
   {% endfor %}
 </div>
 <script type="text/javascript">
