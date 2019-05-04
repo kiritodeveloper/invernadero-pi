@@ -113,6 +113,14 @@ def update(id):
 
     return render_template('actuator/update.html', actuator=actuator, sensores=sensores)
 
+@bp.route('/<int:id>/getstatus')
+@login_required
+def getstatus(id):
+    actuador = get_actuator(id)
+    
+    return str(actuador['status'])
+
+
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required

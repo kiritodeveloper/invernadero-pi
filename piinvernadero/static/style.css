@@ -45,7 +45,7 @@ nav ul li a:hover { background-color: #86a8b2;}
 #primero, #segundo, #tercero, #cuarto, #quinto, #sexto #septimo { width:20%;}
 /*#tercero, #cuarto, #quinto, #sexto #septimo{ width:60%;}*/
 
-
+/*Para el checbox On Off, puede usarse este tambien https://proto.io/freebies/onoff*/
 .switch { position: relative;  display: inline-block;  width: 60px;  height: 34px;}
 .switch input {   opacity: 0;  width: 0;  height: 0;}
 .slider {  position: absolute;  cursor: pointer;  top: 0;  left: 0;  right: 0;  bottom: 0;  background-color: #ccc;  -webkit-transition: .4s;   transition: .4s;}

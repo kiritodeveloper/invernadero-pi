@@ -23,15 +23,24 @@ def index():
         ' FROM sensor '
         ' ORDER BY id ASC'
     ).fetchall()
+    boxwidth=100*len(sensores)+(len(sensores)%2)*100
     lugares = db.execute(
-            'SELECT id, name'
+        'SELECT id, name'
         ' FROM site '
         ' ORDER BY id ASC'
     ).fetchall()
 
+    actuators = db.execute(
+        'SELECT ac.id as id, ac.name as name, status, sensor_id, se.name as sensor, si.name as site'
+        ' FROM actuator ac JOIN sensor se ON ac.sensor_id=se.id '
+        ' JOIN site si ON se.site_id=si.id'
+        ' ORDER BY id ASC'
+    ).fetchall()
+
+
     #print (*lugares,sep = ", ")
     print (lugares[0]['id'])
-    return render_template('dashboard/index.html', sensores=sensores,lugares=lugares)
+    return render_template('dashboard/index.html', sensores=sensores,boxwidth=boxwidth,lugares=lugares, actuators=actuators)
 
 @bp.route('/actual')
 @login_required

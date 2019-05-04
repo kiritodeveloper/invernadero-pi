@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% set lugarsensor = {} %}
+{% set index ={'actuador':0} %}
 {% block header %}
   <h1>{% block title %}Dashboard{% endblock %}</h1>
         <script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
@@ -9,7 +10,7 @@
         <script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
         <script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
         <style type="text/css">
-          .outer {width: 600px;height: 200px;margin: 0 auto;}
+           .outer {width: 600px;height: {{ boxwidth }}px;margin: 0 auto;}
           .outer .chart-container {width: 300px;float: left;height: 200px;}
           .highcharts-yaxis-grid .highcharts-grid-line {display: none;}
           @media (max-width: 600px) {
@@ -88,6 +89,7 @@
 
 {% block content %}
 
+<h3>Sensores </h3>
 <div class="outer">
   {% for sensor in sensores %}
      {% for lugar in lugares %}
@@ -96,15 +98,82 @@
             <div id="{{sensor['name']}}-{{lugarsensor['nombre']}}" class="chart-container"></div>
         {% endif %}
      {% endfor %}
-
-
   {% endfor %}
 </div>
 
+<div id="content-body-wrapper">
 
+
+  <h3>Actuadores</h3>
+  {% for actuator in actuators %}
+    {% if index['actuador'] % 3 == 0  %}
+      <div id="content-body">
+        <div id="primero" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+		      <input  id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}" 
+		              type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>{{ actuator['status'] }}
+        </div>
+
+    {% elif index['actuador'] % 3 == 1  %}
+         <div id="segundo" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+                      <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
+		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>{{ actuator['status'] }}
+         </div>
+    {% else %}
+         <div id="tercero" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+                      <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
+		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>{{ actuator['status'] }}
+         </div>
+      </div>
+    {% endif %}
+    {% set _ = index.update({'actuador':index['actuador']+1}) %}
+  {% endfor %}
+</div>
+<script type="text/javascript">
+  {% for actuator in actuators %}
+     setInterval(function actualizachecbox() {
+       var result = null;
+       var data= null;
+       $.ajax({
+              async: false,
+              url: '{{ url_for('actuator.getstatus', id=actuator['id']) }}',
+              data: {data},
+              dataType: "json",
+              success: function(data){
+                         result = data;
+                       }
+       });
+       if (result==1){
+          document.getElementById("actuator-{{actuator['id']}}").checked = true;
+       }else{	    
+           // Uncheck
+           document.getElementById("actuator-{{actuator['id']}}").checked = false;
+       }
+     }, 3140);
+
+  {% endfor %}
+</script>
+
+
+	<h3>Historicos</h3>
   {% for lugar in lugares %}
     <div id="{{lugar['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
   {% endfor %}
+
 
 	<script type="text/javascript">
 
@@ -224,8 +293,6 @@
 				    point.update(newVal);
 			}, 5000);
          {% endfor %}
-
-
         </script>
 
 
