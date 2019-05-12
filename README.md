@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 Este es un proyecto que utiliza python flask, sqlite3 y highcharts para poder visualizar y configurar sensores en arduinos.
 
@@ -36,3 +37,9 @@ El usuario y clave por defecto son: admin:admin
 - [ ] Verificar la devolucion de valores nulos
 - [ ] Agregar un modulo de traduccion de interfaz
 - [ ] Hacer widgets de arrastrar para graficas de sensonres
+=======
+# invernadero-pi
+Sistema para la configuracion y monitoreo de sensores en la raspberry pi con python, flask, highcharts
+
+Esta version se a utilizado el ejemplo que aparece en este blog https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
+>>>>>>> c8ca33abe683c96ae64ae1a7575f7ebb5a7ac19d
