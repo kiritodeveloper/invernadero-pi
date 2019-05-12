@@ -32,7 +32,7 @@ def create_app(test_config=None):
     def init_scheduler():
         from . import sensorread
         scheduler = BackgroundScheduler()
-        scheduler.add_job(func=sensorread.print_date_time, trigger="interval", seconds=5)
+        scheduler.add_job(func=sensorread.read_sensors, trigger="interval", seconds=5)
         scheduler.start()
         # Shut down the scheduler when exiting the app
         atexit.register(lambda: scheduler.shutdown())
