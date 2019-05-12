@@ -27,6 +27,8 @@ Para ejecutarlo en un ambiente virtual y que se pueda ver en la red local
  flask init-db
  flask run --host=0.0.0.0
 ```
+Luego deberán abrir la direccion http://127.0.0.1:5000/auth/login
+
 
 El sistema deberá tener:
 - [X] Administración de usuarios y grupos
