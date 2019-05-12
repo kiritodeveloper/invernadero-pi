@@ -8,6 +8,14 @@ https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
   500  apt install sqlite3
 
 
-http://flask.pocoo.org/docs/1.0/tutorial/layout/
 https://nvie.com/posts/a-successful-git-branching-model/
+
 http://flask.pocoo.org/docs/1.0/patterns/celery/
+http://flask.pocoo.org/docs/1.0/tutorial/layout/
+http://flask.pocoo.org/docs/1.0/tutorial/deploy/
+
+https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database
+
+
+http://pythonwise.blogspot.com/2014/11/a-streaming-chart-using-flask-and-flot.html
+
