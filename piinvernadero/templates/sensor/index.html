@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Sensores{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('sensor.create') }}">Nuevo</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div id="content-body-wrapper">
+      <div id="primero"> <h1></h1> </div>
+      <div id="segundo"><h4>Lugar</h4></div>
+      <div id="tercero"><h4>Unidad</h4></div>
+      <div id="cuarto"><h4>Mínimo</h3></div>
+      <div id="quinto"><h4>Máximo</h4></div>
+
+
+
+  {% for sensor in sensors %}
+    <div id="content-body">
+      <div id="primero"> <h1><a class="action" href="{{ url_for('sensor.graph',id=sensor['id']) }}">{{ sensor['name'] }}</a></h1> </div>
+      <div id="segundo">{{ sensor['sname'] }}</div>
+      <div id="tercero">{{ sensor['unit'] }}</div>
+      <div id="cuarto">{{ sensor['min'] }}</div>
+      <div id="quinto">{{ sensor['max'] }}</div>
+    {% if g.user['id'] %}
+      <div id="sexto">    <a class="action" href="{{ url_for('sensor.update', id=sensor['id']) }}">Editar</a> </div>
+    {% endif %}
+    </div>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+
+
+  </div>
+{% endblock %}

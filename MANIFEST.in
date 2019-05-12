@@ -1,0 +1,4 @@
+include piinvernadero/schema.sql
+graft   piinvernadero/static
+graft   piinvernadero/templates
+global-exclude *.pyc

@@ -1,0 +1,2 @@
+export FLASK_APP=piinvernadero
+export FLASK_ENV=development

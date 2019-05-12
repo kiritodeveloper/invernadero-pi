@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Editar Lugar{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="name">Nombre</label>
+    <input name="name" id="name" 
+     value="{{site['name'] }}" readonly>
+    <label for="description">Descripci&oacute;n</label>
+    <input name="description" id="description" 
+    value="{{ request.form['description'] or site['description'] }}" required>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  <form action="{{ url_for('site.delete', id=site['id']) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Esta seguro?');">
+  </form>
+{% endblock %}

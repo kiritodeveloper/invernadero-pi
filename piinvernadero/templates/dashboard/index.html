@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+
+{% set lugarsensor = {} %}
+{% set index ={'actuador':0} %}
+{% block header %}
+  <h1>{% block title %}Dashboard{% endblock %}</h1>
+        <script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='highstock.js') }}"></script>
+        <script src="{{ url_for('static', filename='exporting.js') }}"></script>
+        <script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+        <script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
+        <style type="text/css">
+           .outer {width: 600px;height: {{ sensores|length*100+(sensores|length % 2)*100  }}px;margin: 0 auto;}
+          .outer .chart-container {width: 300px;float: left;height: 200px;}
+          .highcharts-yaxis-grid .highcharts-grid-line {display: none;}
+          @media (max-width: 600px) {
+                .outer {width: 100%;    height: 400px;}
+                .outer .chart-container {width: 300px;float: none;margin: 0 auto;}
+                }
+        </style>
+        <script type="text/javascript">
+  {% for lugar in lugares %}
+  $(function() {
+
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    // Create the chart
+    window.chart = new Highcharts.StockChart({
+	plotOptions: {
+          series: {
+            allowPointSelect: true
+          }
+        },
+        chart: {
+            renderTo: '{{lugar['name']}}'
+        },
+	legend: {
+            enabled: true,
+	    title: { text: "sensores"}
+        },
+        rangeSelector: {
+            selected: 4
+        },
+
+        title: {
+            text: '{{lugar['name']}}'
+        },
+
+        exporting: {
+            enabled: true
+        },
+
+        series: [
+	  {% for sensor in sensores %}
+             {% if sensor['site_id'] == lugar['id'] %}
+
+		{
+            name: '{{sensor['name']}}',
+            data: (function cargajson() {
+		    var result = null;
+		    var data= null;
+		    $.ajax({
+		        async: false,
+		        url: '{{ url_for('dashboard.datajson', id=lugar['id'], sensor=sensor['id']) }}',
+		        data: {data},
+		        dataType: "json",
+		        success: function(data){
+		            result = data;
+		        }
+		    });
+		    return result;
+            }
+	    )()},
+	  {% endif %}
+        {% endfor %}
+	]
+    });
+
+});
+  {% endfor %}
+
+		</script>
+
+{% endblock %}
+
+{% block content %}
+
+<h3>Sensores </h3>
+<div class="outer">
+  {% for sensor in sensores %}
+     {% for lugar in lugares %}
+        {% if lugar['id'] == sensor['site_id'] %}
+            {% set _ = lugarsensor.update({'nombre':lugar['name']}) %}
+            <div id="{{sensor['name']}}-{{lugarsensor['nombre']}}" class="chart-container"></div>
+        {% endif %}
+     {% endfor %}
+  {% endfor %}
+</div>
+
+<div id="content-body-wrapper">
+
+
+  <h3>Actuadores</h3>
+  {% for actuator in actuators %}
+    {% if index['actuador'] == 0 or index['actuador'] % 3 == 0 %} <div id="content-body"> {% endif %}
+    {% if index['actuador'] % 3 == 0  %}
+        <div id="primero" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+		      <input  id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}" 
+		              type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>
+        </div>
+
+    {% elif index['actuador'] % 3 == 1  %}
+         <div id="segundo" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+                      <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
+		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>
+         </div>
+    {% else %}
+         <div id="tercero" >
+		<span > <a class="action" href="{{ url_for('actuator.update', id=actuator['id']) }}">
+				{{ actuator['site'] }}-{{ actuator['sensor'] }}</a></span>
+              <label class="switch">
+                      <input id="actuator-{{actuator['id']}}" name="actuator-{{actuator['id']}}"  
+		             type="checkbox" {%- if actuator['status'] -%} checked {% endif %} disabled>
+                      <span class="slider round"></span>
+              </label>
+         </div>
+    {% endif %} 
+    {% set _ = index.update({'actuador':index['actuador']+1}) %}
+    {% if index['actuador'] == actuators|length or (index['actuador']-1) % 3 == 2 %} </div> {% endif %}
+  {% endfor %}
+</div>
+<script type="text/javascript">
+  {% for actuator in actuators %}
+     setInterval(function actualizachecbox() {
+       var result = null;
+       var data= null;
+       $.ajax({
+              async: false,
+              url: '{{ url_for('actuator.getstatus', id=actuator['id']) }}',
+              data: {data},
+              dataType: "json",
+              success: function(data){
+                         result = data;
+                       }
+       });
+       if (result==1){
+          document.getElementById("actuator-{{actuator['id']}}").checked = true;
+       }else{	    
+           // Uncheck
+           document.getElementById("actuator-{{actuator['id']}}").checked = false;
+       }
+     }, 3140);
+
+  {% endfor %}
+</script>
+
+
+	<h3>Historicos</h3>
+  {% for lugar in lugares %}
+    <div id="{{lugar['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  {% endfor %}
+
+
+	<script type="text/javascript">
+
+		var gaugeOptions = {
+    		chart: {
+		        type: 'solidgauge'
+		    },
+		    title: null,
+		    pane: {
+		        center: ['50%', '85%'],
+		        size: '140%',
+		        startAngle: -90,
+		        endAngle: 90,
+		        background: {
+		            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+		            innerRadius: '60%',
+		            outerRadius: '100%',
+		            shape: 'arc'
+		        }
+		    },
+		    tooltip: {
+		        enabled: false
+		    },
+		    // the value axis
+		    yAxis: {
+		        stops: [
+		            [0.2, '#27C5F0'], // cyan
+		            [0.4, '#55BF3B'], // green
+		            [0.6, '#DDDF0D'], // yellow
+		            [0.6, '#DF5353'] // red
+		        ],
+		        lineWidth: 0,
+		        minorTickInterval: null,
+		        tickAmount: 2,
+		        title: {
+		            y: -70
+		        },
+		        labels: {
+		            y: 16
+		        }
+		    },
+		    plotOptions: {
+		        solidgauge: {
+		            dataLabels: {
+		                y: 5,
+		                borderWidth: 0,
+		                useHTML: true
+		            }
+		        }
+		    }
+		};
+
+          {% for sensor in sensores %}
+                          {% for lugar in lugares %}
+                            {% if lugar['id'] == sensor['site_id'] %}
+                                {% set _ = lugarsensor.update({'nombre':lugar['name']}) %}
+                            {% endif %}
+                          {% endfor %}
+
+		// The speed gauge
+		var chart{{sensor['name']}}{{lugarsensor['nombre']}}= Highcharts.chart('{{sensor['name']}}-{{lugarsensor['nombre']}}', Highcharts.merge(gaugeOptions, {
+		    yAxis: {
+		        min: {{sensor['min']}},
+		        max: {{sensor['max']}},
+		        title: {
+				text: '{{sensor['name']}}-{{lugarsensor['nombre']}}'
+		        }
+		    },
+		    credits: {
+		        enabled: false
+		    },
+		    series: [{
+			    name: '{{sensor['name']}}-{{lugarsensor['nombre']}}',
+		        data: [(function cargajson() {
+		                    var result = null;
+		                    var data= null;
+		                    $.ajax({
+		                        async: false,
+            		                url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		                        data: {data},
+		                        dataType: "json",
+		                        success: function(data){
+		                            result = data;
+		                        }
+		                    });
+		                    return result;
+		            }
+		            )()],
+		        dataLabels: {
+		            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+		                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:1f}</span><br/>' +
+		                   '<span style="font-size:12px;color:silver">{{sensor['unit']}}</span></div>'
+		        },
+		        tooltip: {
+		            valueSuffix: '{{sensor['unit']}}'
+		        }
+		    }]
+		}));
+
+
+		// Bring life to the dials
+		setInterval(function cargajson() {
+		        	    point = chart{{sensor['name']}}{{lugarsensor['nombre']}}.series[0].points[0];
+		                    var result = null;
+		                    var data= null;
+		                    $.ajax({
+		                        async: false,
+		                        url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		                        data: {data},
+		                        dataType: "json",
+		                        success: function(data){
+		                            result = data;
+		                        }
+		                    });
+			            point.y=result;
+				    newVal=point.y;
+				    point.update(newVal);
+			}, 5000);
+         {% endfor %}
+        </script>
+
+
+
+
+{% endblock %}

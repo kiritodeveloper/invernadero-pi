@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Lugares{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('site.create') }}">Nuevo</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for site in sites %}
+    <article class="post">
+      <header>
+        <div>
+          <h1><a class="action" href="{{ url_for('site.graph', id=site['id']) }}">{{ site['name'] }}</a></h1>
+        </div>
+        {% if g.user['id'] %}
+          <a class="action" href="{{ url_for('site.update', id=site['id']) }}">Editar</a>
+        {% endif %}
+      </header>
+      <p class="description">{{ site['description'] }}</p>
+      <div id="sensores">
+         <ul>
+         {% for sensor in sensores %}
+           {% if sensor and sensor['site_id'] == site['id'] %}
+            <li><a class="action" href="{{ url_for('sensor.update', id=sensor['id']) }}">{{ sensor['name'] }}</a></li>
+	   {% endif %}
+         {% endfor %}
+         </ul>
+      </div>
+
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
