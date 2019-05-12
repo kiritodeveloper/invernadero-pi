@@ -4,15 +4,30 @@ Este es un proyecto que utiliza python flask, sqlite3 y highcharts para poder vi
 ## Instrucciones ejecutarlo en  debian
 
 ```
- apt install python3-flask python3-flask-flatpages sqlite3 git
+ apt install python3 python3-flask python3-flask-flatpages sqlite3 git
  git clone https://github.com/neozerosv/invernadero-pi
  cd invernadero-pi
  # Si se quiere usar la version en desarrollo ejecutar 
  git checkout develop
- . .initflask 
+ source .initflask 
  flask init-db
  flask run
 ```
+Para ejecutarlo en un ambiente virtual y que se pueda ver en la red local
+```
+ apt install python3 python-sqlite sqlite3 git python3-venv
+ git clone https://github.com/neozerosv/invernadero-pi
+ cd invernadero-pi
+ # Si se quiere usar la version en desarrollo ejecutar
+ git checkout develop
+ python3 -m venv venv/
+ source venv/bin/activate
+ pip3 install flask
+ source .initflask
+ flask init-db
+ flask run --host=0.0.0.0
+```
+
 El sistema deberá tener:
 - [X] Administración de usuarios y grupos
 - [X] Administración de lugares (invernaderos) 
