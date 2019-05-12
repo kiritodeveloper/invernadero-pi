@@ -1,6 +1,8 @@
-import os
+import os 
+import atexit
 
 from flask import Flask
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 def create_app(test_config=None):
@@ -24,6 +26,17 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+
+    # Para ejecutar cada 5 segundos la lectura de sensores
+    @app.before_first_request
+    def init_scheduler():
+        from . import sensorread
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(func=sensorread.print_date_time, trigger="interval", seconds=5)
+        scheduler.start()
+        # Shut down the scheduler when exiting the app
+        atexit.register(lambda: scheduler.shutdown())
+
     # a simple page that says hello
     @app.route('/hello')
     def hello():
@@ -32,6 +45,8 @@ def create_app(test_config=None):
     #Para inicializar la DB
     from . import db
     db.init_app(app)
+
+
 
     #Para la autenticacion
     from . import auth
@@ -52,6 +67,9 @@ def create_app(test_config=None):
 
     from . import actuator
     app.register_blueprint(actuator.bp)
+
+    from . import sensorread
+
 
     return app
 

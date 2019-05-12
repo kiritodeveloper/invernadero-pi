@@ -27,7 +27,7 @@ Para ejecutarlo en un ambiente virtual y que se pueda ver en la red local
  flask init-db
  flask run --host=0.0.0.0
 ```
-Luego deberán abrir la direccion http://127.0.0.1:5000/auth/login
+Luego deberán abrir la direccion http://127.0.0.1:5000/auth/login el usuario y clave por defecto son: admin:admin
 
 
 El sistema deberá tener:
@@ -41,7 +41,6 @@ El sistema deberá tener:
 - [ ] Modificar el dashboard para agregar sensores seleccionados por el usuario
 - [ ] Integracion con las lecturas de los luagares
 
-El usuario y clave por defecto son: admin:admin
 
 
 ![Captura de grafica](https://github.com/neozerosv/invernadero-pi/raw/develop/images/invernadero-pi-grafica-bruto.png)
@@ -52,4 +51,5 @@ El usuario y clave por defecto son: admin:admin
 - [ ] Actualizar las gráficas dinamicamente
 - [ ] Verificar la devolucion de valores nulos
 - [ ] Agregar un modulo de traduccion de interfaz
+- [ ] Cambiar la programación usando clases
 - [ ] Hacer widgets de arrastrar para graficas de sensonres
