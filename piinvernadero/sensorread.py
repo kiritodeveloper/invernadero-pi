@@ -67,7 +67,6 @@ def read_sensors():
             #pasa a la funcion de escritura)
       
             if pares:
-                conn.commit()
                 lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
                 print(lectura)
                 #conn.executemany('INSERT INTO sitetableinvernadero1(date,cTemp,humidity)  VALUES (?,?,?)', lectura)
@@ -75,12 +74,10 @@ def read_sensors():
                 conn.executemany(sql, lectura)
                 conn.commit()
 
-                #for i in pares:
-                #    print("Registro {}: 0x{:08X}".format(i[0], i[1]))
-                #    print("-", i[1])
             else:
                 print("No hubo respuesta al leer los sensores del sitio "+sitename+" con direccion "+str(siteaddress) )
 
     finally:
         gpio.cleanup()
+        conn.close()
 
