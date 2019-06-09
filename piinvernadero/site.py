@@ -15,7 +15,7 @@ bp = Blueprint('site', __name__, url_prefix='/site')
 def index():
     db = get_db()
     sites = db.execute(
-        'SELECT id, name, description'
+        'SELECT id, name, address, description'
         ' FROM site'
         ' ORDER BY id ASC'
     ).fetchall()
@@ -51,6 +51,7 @@ def graph(id):
 def create():
     if request.method == 'POST':
         name = request.form['name']
+        address = request.form['address']
         description = request.form['description']
         db = get_db()
         error = None
@@ -59,6 +60,8 @@ def create():
             error = 'El nombre del lugar es requerido.'
         elif (' ' in name):
               error = 'El nombre no debe llevar espacios'
+        elif (' ' in address):
+              error = 'La direccion del lugar es requerido'
         elif not description:
             error = 'La descripción es requerida'
         elif db.execute(
@@ -68,8 +71,8 @@ def create():
 
         if error is None:
             db.execute(
-                'INSERT INTO site (name, description) VALUES (?, ?)',
-                (name.lower(), description)
+                'INSERT INTO site (name, address, description) VALUES (?, ?, ?)',
+                (name.lower(), address, description)
             )
             db.execute (
                 'CREATE TABLE sitetable'+name.lower()+'  ( id INTEGER PRIMARY KEY AUTOINCREMENT, date datetime )'
@@ -84,7 +87,7 @@ def create():
 
 def get_site(id):
     site = get_db().execute(
-        'SELECT id, name, description'
+        'SELECT id, name, address, description'
         ' FROM site '
         ' WHERE id = ?',
         (id,)
@@ -102,6 +105,7 @@ def update(id):
 
     if request.method == 'POST':
         description = request.form['description']
+        address = request.form['address']
         error = None
 
         if error is not None:
@@ -109,9 +113,9 @@ def update(id):
         else:
             db = get_db()
             db.execute(
-                'UPDATE site SET  description = ?'
+                'UPDATE site SET  address=?,description = ?'
                 ' WHERE id = ?',
-                (description, id)
+                (address, description, id)
             )
             db.commit()
             return redirect(url_for('site.index'))

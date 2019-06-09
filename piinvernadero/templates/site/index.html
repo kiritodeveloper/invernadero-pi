@@ -18,7 +18,7 @@
           <a class="action" href="{{ url_for('site.update', id=site['id']) }}">Editar</a>
         {% endif %}
       </header>
-      <p class="description">{{ site['description'] }}</p>
+      <p class="description">{{ site['description'] }} - 0x{{ site['address'] }}</p>
       <div id="sensores">
          <ul>
          {% for sensor in sensores %}
