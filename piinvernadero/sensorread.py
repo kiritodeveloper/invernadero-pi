@@ -8,11 +8,20 @@ from time import sleep
 
 """ Demonstrating Flask, using APScheduler. """
 
+import sqlite3
 import time
+import os
+import array
+print(os.path.abspath('.')+'/instance/invernadero.sqlite')
+
 def print_date_time():
     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
 def read_sensors():
+    conn = sqlite3.connect(os.path.abspath('.')+'/instance/invernadero.sqlite')
+    conn.row_factory = sqlite3.Row #Para que use indices de nombres de columnas
+
+
     #En caso de usar un radio con PA/LNA, cuya direccion de comunicacion es controlada por el AT86RF233
     #y cuyo control de pass through se controla por GPIO, se puede usar esta linea:
     #phy = driver_at86rf233(gpio, FEM_TXRX = True, pin_FEM_CPS = 15)
@@ -30,15 +39,47 @@ def read_sensors():
     mac.escr_config_red(canal=26, pan_id=0xCAFE, dir_corta=0x0100)
 
     try:
-        pares = i32ctt.leer_registros(0x0201, 1, [2, 3])
-        #Se imprime la lista de tuplas retornada por el otro nodo (poseen la misma estructura que se le
-        #pasa a la funcion de escritura)
-        if pares:
-            for i in pares:
-                print("Registro {}: 0x{:08X}".format(i[0], i[1]))
-                print("-", i[1])
-        else:
-            print("No hubo respuesta al leer")
+        for row in conn.execute('SELECT * FROM site ORDER BY id'):
+
+            #Generando el SQL y los valores de la conexion via I32CCT
+            sensores=" "
+            valores=" "
+            siteid=row['id']
+            sitename=row['name']
+            siteaddress=row['address']
+
+            c = conn.cursor()
+            c.execute('SELECT name FROM sensor WHERE  site_id = '+str(siteid))
+            rows=c.fetchall()
+            #Obteniendo el numero de  direcciones a leer del arduino
+            paresaddress = list(range(len(rows)*2))
+
+            #Construyendo la sentencia SQL para leer los sensores en la tabla del sitio
+            for sensor in rows:
+                sensores=sensores+" ,"+sensor['name']
+                valores=",?"+valores
+            sql='INSERT INTO sitetable'+sitename+"(date"+sensores+") VALUES (?"+valores+")"
+
+            #Lee las direcciones 0,1  (temperatura) y 2,3 (humedad) (Ver el codigo de python
+            #pares = i32ctt.leer_registros(0x0201, 1, [0, 1, 2, 3])
+            pares = i32ctt.leer_registros(int("0x0"+str(siteaddress),16), 1, paresaddress)
+            #Se imprime la lista de tuplas retornada por el otro nodo (poseen la misma estructura que se le
+            #pasa a la funcion de escritura)
+      
+            if pares:
+                conn.commit()
+                lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
+                print(lectura)
+                #conn.executemany('INSERT INTO sitetableinvernadero1(date,cTemp,humidity)  VALUES (?,?,?)', lectura)
+                print("conn.executemany("+sql+","+ str(lectura)+")")
+                conn.executemany(sql, lectura)
+                conn.commit()
+
+                #for i in pares:
+                #    print("Registro {}: 0x{:08X}".format(i[0], i[1]))
+                #    print("-", i[1])
+            else:
+                print("No hubo respuesta al leer los sensores del sitio "+sitename+" con direccion "+str(siteaddress) )
 
     finally:
         gpio.cleanup()

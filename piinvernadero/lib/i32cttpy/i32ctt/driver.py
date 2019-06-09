@@ -4,7 +4,7 @@ from .framer import framer_i32ctt
 import time
 
 class driver_i32ctt:
-  __timeout = 0.5
+  __timeout = 1
   __lista_esclavos = []
 
   #Clase vacia usada como contenedor de datos
