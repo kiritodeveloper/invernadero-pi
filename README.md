@@ -5,15 +5,32 @@ Esta version se a utilizado el ejemplo que aparece en este blog https://www.font
 ## Instrucciones ejecutarlo en  debian
 
 ```
- apt install python3-flask python3-flask-flatpages sqlite3 git
+ apt install python3 python3-flask python3-flask-flatpages sqlite3 git
  git clone https://github.com/neozerosv/invernadero-pi
  cd invernadero-pi
  # Si se quiere usar la version en desarrollo ejecutar 
  git checkout develop
- . .initflask 
+ source .initflask 
  flask init-db
  flask run
 ```
+Para ejecutarlo en un ambiente virtual y que se pueda ver en la red local
+```
+ apt install python3 python-sqlite sqlite3 git python3-venv
+ git clone https://github.com/neozerosv/invernadero-pi
+ cd invernadero-pi
+ # Si se quiere usar la version en desarrollo ejecutar
+ git checkout develop
+ python3 -m venv venv/
+ source venv/bin/activate
+ pip3 install flask
+ source .initflask
+ flask init-db
+ flask run --host=0.0.0.0
+```
+Luego deberán abrir la direccion http://127.0.0.1:5000/auth/login el usuario y clave por defecto son: admin:admin
+
+
 El sistema deberá tener:
 - [X] Administración de usuarios y grupos
 - [X] Administración de lugares (invernaderos) 
@@ -25,7 +42,6 @@ El sistema deberá tener:
 - [ ] Modificar el dashboard para agregar sensores seleccionados por el usuario
 - [ ] Integracion con las lecturas de los luagares
 
-El usuario y clave por defecto son: admin:admin
 
 
 ![Captura de grafica](https://github.com/neozerosv/invernadero-pi/raw/develop/images/invernadero-pi-grafica-bruto.png)
@@ -36,6 +52,7 @@ El usuario y clave por defecto son: admin:admin
 - [ ] Actualizar las gráficas dinamicamente
 - [ ] Verificar la devolucion de valores nulos
 - [ ] Agregar un modulo de traduccion de interfaz
+- [ ] Cambiar la programación usando clases
 - [ ] Hacer widgets de arrastrar para graficas de sensonres
 
 
