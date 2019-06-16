@@ -1,4 +1,4 @@
-Este es un proyecto que utiliza python flask, sqlite3 y highcharts para poder visualizar y configurar sensores en arduinos.
+Este es un proyecto que utiliza python flask, sqlite3, I32CTT y highcharts para poder visualizar y configurar sensores en arduinos.
 
 Esta version se a utilizado el ejemplo que aparece en este blog https://www.fontenay-ronan.fr/dynamic-charts-with-highcharts-sqlite-and-python/
 
@@ -40,7 +40,8 @@ El sistema deberá tener:
 - [X] Graficas de los valores historicos de los sensores
 - [X] Graficas de los sensores actuales de cada lugar (invernadero)
 - [ ] Modificar el dashboard para agregar sensores seleccionados por el usuario
-- [ ] Integracion con las lecturas de los luagares
+- [ ] Integracion con las lecturas de los lugares
+- [ ] Gestion de logs para los eventos de lecturas de sensores y eventos
 
 
 
