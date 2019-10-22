@@ -29,8 +29,8 @@ CREATE TABLE site (
   address INTEGER NOT NULL,
   description TEXT NOT NULL
 );
-INSERT INTO site(name,description) VALUES('invernadero1',201,'Invernadero 1');
-INSERT INTO site(name,description) VALUES('invernadero2',202,'Invernadero 2');
+INSERT INTO site(name,address,description) VALUES('invernadero1',201,'Invernadero 1');
+INSERT INTO site(name,address,description) VALUES('invernadero2',202,'Invernadero 2');
 
 
 CREATE TABLE sensor (
