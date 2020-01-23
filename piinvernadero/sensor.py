@@ -55,7 +55,7 @@ def actual(id):
 
     if sensor is None:
         abort(404, "El id del sensor {0} no existe.".format(id))
-    else
+    else:
         tabla = db.execute('SELECT name FROM site WHERE id='+str(sensor['site_id'])).fetchone()
         resultado = db.execute(
             'SELECT date,'+sensor['name']+
