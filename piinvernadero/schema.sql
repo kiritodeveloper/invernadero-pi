@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS site;
 DROP TABLE IF EXISTS sensor;
 DROP TABLE IF EXISTS actuator;
 DROP TABLE IF EXISTS alert;
-DROP TABLE IF EXISTS invernadero1;
+DROP TABLE IF EXISTS sitetableinvernadero1;
+DROP TABLE IF EXISTS sitetableinvernadero2;
 
 CREATE TABLE grupo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,9 +31,9 @@ CREATE TABLE site (
   description TEXT NOT NULL,
   enabled INTEGER NOT NULL DEFAULT 0
 );
+
 INSERT INTO site(name,address,description,enabled) VALUES('invernadero1',201,'Invernadero 1',1);
 INSERT INTO site(name,address,description,enabled) VALUES('invernadero2',202,'Invernadero 2',0);
-
 
 CREATE TABLE sensor (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
