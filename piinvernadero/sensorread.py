@@ -39,7 +39,7 @@ def read_sensors():
     mac.escr_config_red(canal=26, pan_id=0xCAFE, dir_corta=0x0100)
 
     try:
-        for row in conn.execute('SELECT * FROM site ORDER BY id'):
+        for row in conn.execute('SELECT * FROM site WHERE enabled=1 ORDER BY id'):
 
             #Generando el SQL y los valores de la conexion via I32CCT
             sensores=" "

@@ -18,7 +18,12 @@
           <a class="action" href="{{ url_for('site.update', id=site['id']) }}">Editar</a>
         {% endif %}
       </header>
-      <p class="description">{{ site['description'] }} - 0x{{ site['address'] }}</p>
+      <p class="description">{{ site['description'] }} - 0x{{ site['address'] }}
+        <label class="switch">
+          <input name="enabled" id="enabled" type="checkbox" {%- if site['enabled'] -%} checked {% endif %} disabled>
+          <span class="slider round"></span>
+        </label>{{ site['enabled'] }}
+      </p>
       <div id="sensores">
          <ul>
          {% for sensor in sensores %}
