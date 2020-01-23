@@ -15,6 +15,10 @@
     <label for="address">Direcci&oacute;n</label>
     <input name="address" id="address" 
     value="{{ request.form['address'] or site['address'] }}" required>
+    <label class="switch">
+      <input name="enabled" id="enabled" type="checkbox" {%- if site['enabled'] -%} checked {% endif %}>
+      <span class="slider round"></span>
+    </label>{{ site['enabled'] }}
     <input type="submit" value="Save">
   </form>
   <hr>

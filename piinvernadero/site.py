@@ -15,7 +15,7 @@ bp = Blueprint('site', __name__, url_prefix='/site')
 def index():
     db = get_db()
     sites = db.execute(
-        'SELECT id, name, address, description'
+        'SELECT id, name, address, description,enabled'
         ' FROM site'
         ' ORDER BY id ASC'
     ).fetchall()
@@ -71,7 +71,7 @@ def create():
 
         if error is None:
             db.execute(
-                'INSERT INTO site (name, address, description) VALUES (?, ?, ?)',
+                'INSERT INTO site (name, address, description, enabled) VALUES (?, ?, ?,0)',
                 (name.lower(), address, description)
             )
             db.execute (
@@ -87,7 +87,7 @@ def create():
 
 def get_site(id):
     site = get_db().execute(
-        'SELECT id, name, address, description'
+        'SELECT id, name, address, description','enabled'
         ' FROM site '
         ' WHERE id = ?',
         (id,)
@@ -106,6 +106,11 @@ def update(id):
     if request.method == 'POST':
         description = request.form['description']
         address = request.form['address']
+        if request.form.get('enabled'):
+            enabled=1
+        else:
+            enabled=0
+
         error = None
 
         if error is not None:
@@ -113,9 +118,9 @@ def update(id):
         else:
             db = get_db()
             db.execute(
-                'UPDATE site SET  address=?,description = ?'
+                'UPDATE site SET  address=?,description = ?, enabled = ?'
                 ' WHERE id = ?',
-                (address, description, id)
+                (address, description, enabled, id)
             )
             db.commit()
             return redirect(url_for('site.index'))

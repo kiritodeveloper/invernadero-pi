@@ -39,7 +39,7 @@ def read_sensors():
     mac.escr_config_red(canal=26, pan_id=0xCAFE, dir_corta=0x0100)
 
     try:
-        for row in conn.execute('SELECT * FROM site ORDER BY id'):
+        for row in conn.execute('SELECT * FROM site WHERE enabled=1 ORDER BY id'):
 
             #Generando el SQL y los valores de la conexion via I32CCT
             sensores=" "
@@ -51,31 +51,40 @@ def read_sensors():
             c = conn.cursor()
             c.execute('SELECT name FROM sensor WHERE  site_id = '+str(siteid))
             rows=c.fetchall()
-            #Obteniendo el numero de  direcciones a leer del arduino
-            paresaddress = list(range(len(rows)*2))
+            nsensores=len(rows)
+            if nsensores>0:
+                #Obteniendo el numero de  direcciones a leer del arduino            
+                paresaddress = list(range(nsensores*2))
 
-            #Construyendo la sentencia SQL para leer los sensores en la tabla del sitio
-            for sensor in rows:
-                sensores=sensores+" ,"+sensor['name']
-                valores=",?"+valores
-            sql='INSERT INTO sitetable'+sitename+"(date"+sensores+") VALUES (?"+valores+")"
+                #Construyendo la sentencia SQL para leer los sensores en la tabla del sitio
+                for sensor in rows:
+                    sensores=sensores+" ,"+sensor['name']
+                    valores=",?"+valores
+                sql='INSERT INTO sitetable'+sitename+"(date"+sensores+") VALUES (?"+valores+")"
 
-            #Lee las direcciones 0,1  (temperatura) y 2,3 (humedad) (Ver el codigo de python
-            #pares = i32ctt.leer_registros(0x0201, 1, [0, 1, 2, 3])
-            pares = i32ctt.leer_registros(int("0x0"+str(siteaddress),16), 1, paresaddress)
-            #Se imprime la lista de tuplas retornada por el otro nodo (poseen la misma estructura que se le
-            #pasa a la funcion de escritura)
-      
-            if pares:
-                lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
-                print(lectura)
-                #conn.executemany('INSERT INTO sitetableinvernadero1(date,cTemp,humidity)  VALUES (?,?,?)', lectura)
-                print("conn.executemany("+sql+","+ str(lectura)+")")
-                conn.executemany(sql, lectura)
-                conn.commit()
+                #Lee las direcciones 0,1  (temperatura) y 2,3 (humedad) (Ver el codigo de python
+                #pares = i32ctt.leer_registros(0x0201, 1, [0, 1, 2, 3])
+                pares = i32ctt.leer_registros(int("0x0"+str(siteaddress),16), 1, paresaddress)
+                #Se imprime la lista de tuplas retornada por el otro nodo (poseen la misma estructura que se le
+                #pasa a la funcion de escritura)
 
+                if pares:
+                    valores=(time.strftime("%Y%m%d%H%M%S"),)
+                    for elemento in range(nsensores):
+                        #Genera la tupla con (date, sensor1, sensor2, sensorN)
+                        temp=valores
+                        valores=temp+(pares[(2*elemento)][1]+(pares[2*elemento+1][1]/100),)
+                    lectura = [valores]
+                    #lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
+                    print(lectura)
+                    #conn.executemany('INSERT INTO sitetableinvernadero1(date,cTemp,humidity)  VALUES (?,?,?)', lectura)
+                    print("conn.executemany("+sql+","+ str(lectura)+")")
+                    conn.executemany(sql, lectura)
+                    conn.commit()
+                else:
+                    print("No hubo respuesta al leer los sensores del sitio "+sitename+" con direccion "+str(siteaddress) )
             else:
-                print("No hubo respuesta al leer los sensores del sitio "+sitename+" con direccion "+str(siteaddress) )
+                print("No existen sensores registrados en la base de datos para el sitio "+sitename+" con direccion "+str(siteaddress) )
 
     finally:
         gpio.cleanup()
