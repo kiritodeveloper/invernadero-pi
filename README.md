@@ -30,9 +30,11 @@ Para ejecutarlo en un ambiente virtual y que se pueda ver en la red local
  flask run --host=0.0.0.0
 ```
 Se se va ejecutar en una raspberry PI con modulo 802.15.4-radio deberán instalar los siguientes módulos de python antes de inicializar la base:
+```
  pip3 install apscheduler
  pip3 install rpi.gpio
  pip3 install spidev
+```
 
 Luego deberán abrir la direccion http://127.0.0.1:5000/auth/login el usuario y clave por defecto son: admin:admin
 
