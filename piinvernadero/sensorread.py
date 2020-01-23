@@ -51,8 +51,9 @@ def read_sensors():
             c = conn.cursor()
             c.execute('SELECT name FROM sensor WHERE  site_id = '+str(siteid))
             rows=c.fetchall()
-            #Obteniendo el numero de  direcciones a leer del arduino
-            paresaddress = list(range(len(rows)*2))
+            nsensores=len(rows)
+            #Obteniendo el numero de  direcciones a leer del arduino            
+            paresaddress = list(range(nsensores*2))
 
             #Construyendo la sentencia SQL para leer los sensores en la tabla del sitio
             for sensor in rows:
@@ -67,7 +68,13 @@ def read_sensors():
             #pasa a la funcion de escritura)
       
             if pares:
-                lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
+                valores=(time.strftime("%Y%m%d%H%M%S"),)
+                for elemento in range(nsensores):
+                    #Genera la tupla con (date, sensor1, sensor2, sensorN)
+                    temp=valores
+                    valores=temp+(pares[(2*elemento)][1]+(pares[2*elemento+1][1]/100),)
+                lectura = [valores]
+                #lectura = [(time.strftime("%Y%m%d%H%M%S"), pares[0][1]+(pares[1][1]/100), pares[2][1]+(pares[3][1]/100) )]
                 print(lectura)
                 #conn.executemany('INSERT INTO sitetableinvernadero1(date,cTemp,humidity)  VALUES (?,?,?)', lectura)
                 print("conn.executemany("+sql+","+ str(lectura)+")")
