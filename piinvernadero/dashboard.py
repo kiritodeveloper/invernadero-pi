@@ -109,8 +109,8 @@ def datajsonreg(id,sensor,nreg):
     #Falta mandar error cuando no encuentra el sensor
     resultados = db.execute(
         'SELECT * FROM ( SELECT strftime("%s",substr(date,0,5)||"-" ||substr(date,5,2)||"-"||substr(date,7,2)||" "||substr(date,9,2)||":"||substr(date,11,2)||":"|| substr(date,13,2),"+6 hour") * 1000 as date,'+namesensor['name']+
-           ' FROM sitetable'+tabla['name']+
-        ' ORDER BY date DESC LIMIT '+str(nreg)+') ORDER BY date ASC '
+           ' FROM (SELECT * FROM sitetable'+tabla['name']+
+        ' ORDER BY date DESC LIMIT '+str(nreg)+' ) ) ORDER BY date ASC '
     ).fetchall()
     data = []
     for resultado in resultados:
@@ -130,8 +130,8 @@ def datajsonlast(id,sensor):
     #Falta mandar error cuando no encuentra el sensor
     resultados = db.execute(
            'SELECT strftime("%s",substr(date,0,5)||"-" ||substr(date,5,2)||"-"||substr(date,7,2)||" "||substr(date,9,2)||":"||substr(date,11,2)||":"|| substr(date,13,2),"+6 hour") * 1000 as date,'+namesensor['name']+
-           ' FROM sitetable'+tabla['name']+
-        ' ORDER BY date DESC LIMIT 1'
+           ' FROM (SELECT * FROM sitetable'+tabla['name']+
+        ' ORDER BY date DESC LIMIT 1 )'
     ).fetchall()
     data = []
     for resultado in resultados:
