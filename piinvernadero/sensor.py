@@ -1,6 +1,4 @@
 import functools
-import time
-
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -41,34 +39,20 @@ def graph(id):
 
     return render_template('sensor/graph.html', lugar=lugar, sensor=sensor)
 
-#Obtiene la ultima lectura del sensor del ultimo minuto
-@bp.route('/<int:id>/actual', methods=('GET', 'POST'))
+#Muestra la grafica de un sensor
+@bp.route('/<int:id>/historic', methods=('GET', 'POST'))
 @login_required
-def actual(id):
+def historic(id):
+    sensor = get_sensor(id)
+
     db = get_db()
-    sensor = db.execute(
-        'SELECT id, name, site_id, datatype, unit, min, max'
-        ' FROM sensor '
-        ' WHERE id = ?',
-        (id,)
+    lugar = db.execute(
+        'SELECT id, name, description'
+        ' FROM site WHERE id='+str(sensor['site_id'])+
+        ' ORDER BY id DESC'
     ).fetchone()
 
-    if sensor is None:
-        abort(404, "El id del sensor {0} no existe.".format(id))
-    else:
-        tabla = db.execute('SELECT name FROM site WHERE id='+str(sensor['site_id'])).fetchone()
-        resultado = db.execute(
-            'SELECT date,'+sensor['name']+
-            ' FROM sitetable'+tabla['name']+
-            ' ORDER BY id DESC LIMIT 1'
-        ).fetchone()
-        dateActual=time.strftime("%Y%m%d%H%M%S")
-        print(dateActual)
-        print(resultado)
-        print(resultado['date'])
-
-    #print (resultado[namesensor['name']])
-    return dateActual
+    return render_template('sensor/historic.html', lugar=lugar, sensor=sensor)
 
 
 #Crea un sensor

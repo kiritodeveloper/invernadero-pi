@@ -28,12 +28,11 @@ CREATE TABLE site (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
   address INTEGER NOT NULL,
-  description TEXT NOT NULL,
-  enabled INTEGER NOT NULL DEFAULT 0
+  description TEXT NOT NULL
 );
+INSERT INTO site(name,address,description) VALUES('invernadero1',201,'Invernadero 1');
+INSERT INTO site(name,address,description) VALUES('invernadero2',202,'Invernadero 2');
 
-INSERT INTO site(name,address,description,enabled) VALUES('invernadero1',201,'Invernadero 1',1);
-INSERT INTO site(name,address,description,enabled) VALUES('invernadero2',202,'Invernadero 2',0);
 
 CREATE TABLE sensor (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +41,7 @@ CREATE TABLE sensor (
   datatype TEXT NOT NULL,
   unit TEXT NOT NULL,
   min real NOT NULL,
-  max real NOT NULL,  
+  max real NOT NULL,
   FOREIGN KEY (site_id) REFERENCES site (id),
   CHECK ( datatype IN ('integer','real','datetime'))
 );

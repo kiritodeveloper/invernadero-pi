@@ -2,6 +2,8 @@
 
 {% block header %}
   <h1>{% block title %}Grafica los sensores del {{lugar['name']}}{% endblock %}</h1>
+  <h4><a class="action" href="{{ url_for('site.graph',id=lugar['id']) }}">En Vivo</a> <a class="action" href="{{ url_for('site.historic',id=lugar['id']) }}">Historico</a></h4>
+
 	<script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='highstock.js') }}"></script>
         <script src="{{ url_for('static', filename='exporting.js') }}"></script>
@@ -35,14 +37,57 @@
           }
         },
         chart: {
-            renderTo: '{{lugar['name']}}'
+            renderTo: '{{lugar['name']}}',
+	    events: {
+                load: function () {
+                  {% for sensor in sensores %}
+
+                    // set up the updating of the chart each second
+ 		    var series{{sensor['id']}} = this.series[{{ loop.index-1 }}];
+                    setInterval(function () {
+                        var result = null;
+                        var data= null;
+                        $.ajax({
+                          async: false,
+                          url: '{{ url_for('dashboard.datajsonlast', id=sensor['site_id'], sensor=sensor['id']) }}',
+                          data: {data},
+                          dataType: "json",
+                          success: function(data){
+                              result = data;
+                          }
+                        });
+			
+                        series{{sensor['id']}}.addPoint(result[0], true, true);
+                    }, 10000);
+                 {% endfor %}
+
+                }
+            }
         },
 	legend: {
             enabled: true,
-	    title: { text: "sensores"}
+	    title: { text: "Sensores"}
         },
         rangeSelector: {
-            selected: 4
+		buttons: [{
+                  type: 'minute',
+                  count: 5,
+                  text: '5M'
+               }, {
+	          type: 'minute',
+                  count: 15,
+                  text: '15M'
+               }, {
+                    type: 'ytd',
+                    text: 'YTD'
+
+		}, {
+                    type: 'all',
+                    text: 'All'
+                }],
+                inputEnabled: true,
+		selected: 0,
+
         },
 
         title: {
@@ -62,7 +107,7 @@
 		    var data= null;
 		    $.ajax({
 		        async: false,
-		        url: '{{ url_for('dashboard.datajson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		        url: '{{ url_for('dashboard.datajsonreg', id=sensor['site_id'], sensor=sensor['id'],nreg=1000) }}',
 		        data: {data},
 		        dataType: "json",
 		        success: function(data){

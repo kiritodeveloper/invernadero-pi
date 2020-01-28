@@ -1,217 +1,240 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Grafica de {{sensor['name']}} en {{lugar['name']}}{% endblock %}</h1>
-<script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
-<script src="{{ url_for('static', filename='highstock.js') }}"></script>
-<script src="{{ url_for('static', filename='exporting.js') }}"></script>
-<script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
-<script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
+  <h1>{% block title %}Grafica del {{sensor['name']}} en {{lugar['name']}}{% endblock %}</h1>
+    <h4><a class="action" href="{{ url_for('sensor.graph',id=sensor['id']) }}">En Vivo</a> <a class="action" href="{{ url_for('sensor.historic',id=sensor['id']) }}">Historico</a></h4>
+	<script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='highstock.js') }}"></script>
+        <script src="{{ url_for('static', filename='exporting.js') }}"></script>
+	<script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+	<script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
 
-<style type="text/css">
-	.outer {
-		width: 600px;
-		height: 200px;
-		margin: 0 auto;
-	}
+        <style type="text/css">
+        .outer {width: 600px;height: 200px;margin: 0 auto;}
+        .outer .chart-container {width: 600px;float: left;height: 200px;}
+        .highcharts-yaxis-grid .highcharts-grid-line {display: none;}
+        @media (max-width: 600px) {
+                .outer {width: 100%;    height: 400px;}
+                .outer .chart-container {width: 300px;float: none;margin: 0 auto;}
+                }
+        </style>
 
-	.outer .chart-container {
-		width: 600px;
-		float: left;
-		height: 200px;
-	}
+		<script type="text/javascript">
+  $(function() {
 
-	.highcharts-yaxis-grid .highcharts-grid-line {
-		display: none;
-	}
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
 
-	@media (max-width: 600px) {
-		.outer {
-			width: 100%;
-			height: 400px;
-		}
+    // Create the chart
+    window.chart = new Highcharts.StockChart({
+	plotOptions: {
+          series: {
+            allowPointSelect: true
+          }
+        },
+        chart: {
+            renderTo: '{{sensor['name']}}',
+	    events: {
+                load: function () {
 
-		.outer .chart-container {
-			width: 300px;
-			float: none;
-			margin: 0 auto;
-		}
-	}
-</style>
+                    // set up the updating of the chart each second
+                    var series = this.series[0];
+                    setInterval(function () {
+                        var result = null;
+                        var data= null;
+                        $.ajax({
+                          async: false,
+                          url: '{{ url_for('dashboard.datajsonlast', id=sensor['site_id'], sensor=sensor['id']) }}',
+                          data: {data},
+                          dataType: "json",
+                          success: function(data){
+                              result = data;
+                          }
+                        });
+                        
+                        series.addPoint(result[0], true, true);
+                    }, 10000);
 
-<script type="text/javascript">
-	$(function () {
+                }
+            }
+ 
+        },
+	legend: {
+            enabled: true,
+	    title: { text: "sensores"}
+        },
+        rangeSelector: {
+	   buttons: [{
+                  type: 'minute',
+                  count: 5,
+                  text: '5M'
+               }, {
+                  type: 'minute',
+                  count: 15,
+                  text: '15M'
+               }, {
+                    type: 'ytd',
+                    text: 'YTD'
 
-		Highcharts.setOptions({
-			global: {
-				useUTC: false
-			}
-		});
+                }, {
+                    type: 'all',
+                    text: 'All'
+                }],
+                inputEnabled: true,
+                selected: 0, 
+        },
 
-		// Create the chart
-		window.chart = new Highcharts.StockChart({
-			plotOptions: {
-				series: {
-					allowPointSelect: true
-				}
-			},
-			chart: {
-				renderTo: '{{sensor['name']}}'
-            },
-			legend: {
-				enabled: true,
-				title: { text: "sensores" }
-			},
-			rangeSelector: {
-				selected: 4
-			},
-			title: {
-				text: '{{sensor['name']}}'
-            },
-			exporting: {
-				enabled: true
-			},
-			series: [{
-				name: '{{sensor['name']}}',
-				data: (function cargajson() {
-					var result = null;
-					var data = null;
-					$.ajax({
-						async: false,
-						url: '{{ url_for('dashboard.datajson', id=sensor['site_id'], sensor=sensor['id']) }}',
-						data: { data },
-						dataType: "json",
-						success: function (data) {
-							result = data;
-						}
-					});
-					return result;
-				}
-				)()
-			}
-			]
-		});
+        title: {
+            text: '{{sensor['name']}}'
+        },
 
-	});
+        exporting: {
+            enabled: true
+        },
 
-</script>
+        series: [{
+            name: '{{sensor['name']}}',
+            data: (function cargajson() {
+		    var result = null;
+		    var data= null;
+		    $.ajax({
+		        async: false,
+		        url: '{{ url_for('dashboard.datajsonreg', id=sensor['site_id'], sensor=sensor['id'],nreg=1000) }}',
+		        data: {data},
+		        dataType: "json",
+		        success: function(data){
+		            result = data;
+		        }
+		    });
+		    return result;
+            }
+	    )()}
+	]
+    });
+
+});
+
+		</script>
 {% endblock %}
 {% block content %}
 
 <div class="outer">
-	<div id="{{sensor['name']}}-actual" class="chart-container"></div>
+    <div id="{{sensor['name']}}-actual" class="chart-container"></div>
 </div>
 <div id="{{sensor['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-<script type="text/javascript">
-	var gaugeOptions = {
-		chart: {
-			type: 'solidgauge'
-		},
-		title: null,
-		pane: {
-			center: ['50%', '85%'],
-			size: '140%',
-			startAngle: -90,
-			endAngle: 90,
-			background: {
-				backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-				innerRadius: '60%',
-				outerRadius: '100%',
-				shape: 'arc'
-			}
-		},
-		tooltip: {
-			enabled: false
-		},
-		// the value axis
-		yAxis: {
-			stops: [
-				[0.2, '#27C5F0'], // cyan
-				[0.4, '#55BF3B'], // green
-				[0.6, '#DDDF0D'], // yellow
-				[0.6, '#DF5353'] // red
-			],
-			lineWidth: 0,
-			minorTickInterval: null,
-			tickAmount: 2,
-			title: {
-				y: -70
-			},
-			labels: {
-				y: 16
-			}
-		},
-		plotOptions: {
-			solidgauge: {
-				dataLabels: {
-					y: 5,
-					borderWidth: 0,
-					useHTML: true
-				}
-			}
-		}
-	};
-
-	// The speed gauge
-	var chartSpeed = Highcharts.chart('{{sensor['name']}}-actual', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: {{ sensor['min']}},
-	max: { { sensor['max'] } },
-	title: {
-		text: '{{sensor['name']}}'
-	}
+	<script type="text/javascript">
+		var gaugeOptions = {
+    		chart: {
+		        type: 'solidgauge'
 		    },
-	credits: {
-		enabled: false
-	},
-	series: [{
-		name: '{{sensor['name']}}',
-		data: [(function cargajson() {
-			var result = null;
-			var data = null;
-			$.ajax({
-				async: false,
-				url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
-				data: { data },
-				dataType: "json",
-				success: function (data) {
-					result = data;
-				}
-			});
-			return result;
-		}
-		)()],
-		dataLabels: {
-			format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-				'<span style="font-size:12px;color:silver">{{sensor['unit']}}</span></div>'
-		        },
-		tooltip: {
-			valueSuffix: '{{sensor['unit']}}'
+		    title: null,
+		    pane: {
+		        center: ['50%', '85%'],
+		        size: '140%',
+		        startAngle: -90,
+		        endAngle: 90,
+		        background: {
+		            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+		            innerRadius: '60%',
+		            outerRadius: '100%',
+		            shape: 'arc'
 		        }
-	}]
+		    },
+		    tooltip: {
+		        enabled: false
+		    },
+		    // the value axis
+		    yAxis: {
+		        stops: [
+		            [0.2, '#27C5F0'], // cyan
+		            [0.4, '#55BF3B'], // green
+		            [0.6, '#DDDF0D'], // yellow
+		            [0.6, '#DF5353'] // red
+		        ],
+		        lineWidth: 0,
+		        minorTickInterval: null,
+		        tickAmount: 2,
+		        title: {
+		            y: -70
+		        },
+		        labels: {
+		            y: 16
+		        }
+		    },
+		    plotOptions: {
+		        solidgauge: {
+		            dataLabels: {
+		                y: 5,
+		                borderWidth: 0,
+		                useHTML: true
+		            }
+		        }
+		    }
+		};
+
+		// The speed gauge
+		var chartSpeed = Highcharts.chart('{{sensor['name']}}-actual', Highcharts.merge(gaugeOptions, {
+		    yAxis: {
+		        min: {{sensor['min']}},
+		        max: {{sensor['max']}},
+		        title: {
+		            text: '{{sensor['name']}}'
+		        }
+		    },
+		    credits: {
+		        enabled: false
+		    },
+		    series: [{
+		        name: '{{sensor['name']}}',
+		        data: [(function cargajson() {
+		                    var result = null;
+		                    var data= null;
+		                    $.ajax({
+		                        async: false,
+            		                url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		                        data: {data},
+		                        dataType: "json",
+		                        success: function(data){
+		                            result = data;
+		                        }
+		                    });
+		                    return result;
+		            }
+		            )()],
+		        dataLabels: {
+		            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+		                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+		                   '<span style="font-size:12px;color:silver">{{sensor['unit']}}</span></div>'
+		        },
+		        tooltip: {
+		            valueSuffix: '{{sensor['unit']}}'
+		        }
+		    }]
 		}));
 
 
-	// Bring life to the dials
-	setInterval(function cargajson() {
-		point = chartSpeed.series[0].points[0];
-		var result = null;
-		var data = null;
-		$.ajax({
-			async: false,
-			url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
-			data: { data },
-			dataType: "json",
-			success: function (data) {
-				result = data;
-			}
-		});
-		point.y = result;
-		newVal = point.y;
-		point.update(newVal);
-	}, 5000);
+		// Bring life to the dials
+		setInterval(function cargajson() {
+		        	    point = chartSpeed.series[0].points[0];
+		                    var result = null;
+		                    var data= null;
+		                    $.ajax({
+		                        async: false,
+		                        url: '{{ url_for('dashboard.gaugejson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		                        data: {data},
+		                        dataType: "json",
+		                        success: function(data){
+		                            result = data;
+		                        }
+		                    });
+			            point.y=result;
+				    newVal=point.y;
+				    point.update(newVal);
+			}, 5000);
 
-</script>
+        </script>
 {% endblock %}

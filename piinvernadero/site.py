@@ -45,6 +45,23 @@ def graph(id):
     return render_template('site/graph.html', lugar=lugar, sensores=sensores)
 
 
+#Muestra las graficas historicas
+@bp.route('/<int:id>/historic', methods=('GET', 'POST'))
+@login_required
+def historic(id):
+    lugar = get_site(id)
+
+    db = get_db()
+    sensores = db.execute(
+        'SELECT id, name, site_id, unit, min, max'
+        ' FROM sensor WHERE site_id='+str(lugar['id'])+
+        ' ORDER BY id DESC'
+    ).fetchall()
+
+    return render_template('site/historic.html', lugar=lugar, sensores=sensores)
+
+
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -87,7 +104,7 @@ def create():
 
 def get_site(id):
     site = get_db().execute(
-        'SELECT id, name, address, description','enabled'
+        'SELECT id, name, address, description,enabled'
         ' FROM site '
         ' WHERE id = ?',
         (id,)
@@ -151,3 +168,4 @@ def delete(id):
         return redirect(url_for('site.index'))
     flash(error)
     return redirect(url_for('site.index'))
+

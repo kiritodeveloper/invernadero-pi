@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+  <h1>{% block title %}Grafica los sensores del {{lugar['name']}}{% endblock %}</h1>
+  <h4><a class="action" href="{{ url_for('site.graph',id=lugar['id']) }}">En Vivo</a> <a class="action" href="{{ url_for('site.historic',id=lugar['id']) }}">Historico</a></h4>
+	<script src="{{ url_for('static', filename='jquery-3.4.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='highstock.js') }}"></script>
+        <script src="{{ url_for('static', filename='exporting.js') }}"></script>
+	<script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+	<script src="{{ url_for('static', filename='solid-gauge.js') }}"></script>
+
+        <style type="text/css">
+        .outer {width: 600px;height: 200px;margin: 0 auto;}
+        .outer .chart-container {width: 600px;float: left;height: 200px;}
+        .highcharts-yaxis-grid .highcharts-grid-line {display: none;}
+        @media (max-width: 600px) {
+                .outer {width: 100%;    height: 400px;}
+                .outer .chart-container {width: 300px;float: none;margin: 0 auto;}
+                }
+        </style>
+
+		<script type="text/javascript">
+  $(function() {
+
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    // Create the chart
+    window.chart = new Highcharts.StockChart({
+	plotOptions: {
+          series: {
+            allowPointSelect: true
+          }
+        },
+        chart: {
+            renderTo: '{{lugar['name']}}'
+        },
+	legend: {
+            enabled: true,
+	    title: { text: "Sensores en Una Grafica"}
+        },
+        rangeSelector: {
+		buttons: [{
+                  type: 'week',
+                  count: 1,
+                  text: '5W'
+               }, {
+	          type: 'month',
+                  count: 1,
+                  text: '1M'
+	       }, {
+                  type: 'month',
+                  count: 6,
+                  text: '6M'	  
+               }, {
+                    type: 'ytd',
+                    text: 'YTD'
+		}, {
+                    type: 'all',
+                    text: 'All'
+                }],
+                inputEnabled: true,
+		selected: 4,
+
+        },
+
+        title: {
+            text: '{{lugar['name']}}'
+        },
+
+        exporting: {
+            enabled: true
+        },
+
+        series: [
+          {% for sensor in sensores %}
+		{
+            name: '{{sensor['name']}}',
+            data: (function cargajson() {
+		    var result = null;
+		    var data= null;
+		    $.ajax({
+		        async: false,
+		        url: '{{ url_for('dashboard.datajson', id=sensor['site_id'], sensor=sensor['id']) }}',
+		        data: {data},
+		        dataType: "json",
+		        success: function(data){
+		            result = data;
+		        }
+		    });
+		    return result;
+            }
+	    )()},
+          {% endfor %}
+	]
+    });
+
+
+{% for sensor in sensores %}
+
+    // Create the chart
+    window.chart = new Highcharts.StockChart({
+        plotOptions: {
+          series: {
+            allowPointSelect: true
+          }
+        },
+        chart: {
+            renderTo: '{{sensor['name']}}'
+        },
+        legend: {
+            enabled: true,
+            title: { text: "Sensor"}
+        },
+        rangeSelector: {
+                buttons: [{
+                  type: 'week',
+                  count: 1,
+                  text: '5W'
+               }, {
+                  type: 'month',
+                  count: 1,
+                  text: '1M'
+               }, {
+                  type: 'month',
+                  count: 6,
+                  text: '6M' 
+               }, {
+                    type: 'ytd',
+                    text: 'YTD'
+
+                }, {
+                    type: 'all',
+                    text: 'All'
+                }],
+                inputEnabled: true,
+                selected: 4,
+
+        },
+
+        title: {
+            text: '{{sensor['name']}}'
+        },
+
+        exporting: {
+            enabled: true
+        },
+
+
+        series: [
+                {
+            name: '{{sensor['name']}}',
+            data: (function cargajson() {
+                    var result = null;
+                    var data= null;
+                    $.ajax({
+                        async: false,
+                        url: '{{ url_for('dashboard.datajson', id=sensor['site_id'], sensor=sensor['id']) }}',
+                        data: {data},
+                        dataType: "json",
+                        success: function(data){
+                            result = data;
+                        }
+                    });
+                    return result;
+            }
+            )()},
+        ]
+    });
+
+{% endfor %}
+
+});
+
+
+
+		</script>
+{% endblock %}
+{% block content %}
+
+    <div id="{{lugar['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+    <h5>Listado de Sensores    </h5>
+ {% for sensor in sensores %}
+    <div id="{{sensor['name']}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+ {% endfor %}
+
+{% endblock %}
