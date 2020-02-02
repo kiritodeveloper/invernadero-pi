@@ -49,7 +49,7 @@ def read_sensors():
             siteaddress=row['address']
 
             c = conn.cursor()
-            c.execute('SELECT name FROM sensor WHERE  site_id = '+str(siteid))
+            c.execute('SELECT name FROM sensor,conv WHERE  site_id = '+str(siteid))
             rows=c.fetchall()
             nsensores=len(rows)
             #Obteniendo el numero de  direcciones a leer del arduino
@@ -58,8 +58,8 @@ def read_sensors():
             #Construyendo la sentencia SQL para leer los sensores en la tabla del sitio
             for sensor in rows:
                 sensores=sensores+" ,"+sensor['name']
-                valores=",?"+valores
-            sql='INSERT INTO sitetable'+sitename+"(date"+sensores+") VALUES (?"+valores+")"
+                valores=valores+"?*"+str(sensor['conv'])+","
+            sql='INSERT INTO sitetable'+sitename+"(date"+sensores+") VALUES (?,"+valores[:-1]+")"
 
             #Lee las direcciones 0,1  (temperatura) y 2,3 (humedad) (Ver el codigo de python
             #pares = i32ctt.leer_registros(0x0201, 1, [0, 1, 2, 3])

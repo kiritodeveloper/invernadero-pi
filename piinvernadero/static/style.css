@@ -41,8 +41,8 @@ nav ul li a:hover { background-color: #86a8b2;}
 /* Para el listado tipo tabla*/
 #content-body-wrapper { display:table; border-collapse:collapse;}
 #content-body { display:table-row;}
-#primero, #segundo, #tercero, #cuarto, #quinto, #sexto #septimo { display:table-cell;}
-#primero, #segundo, #tercero, #cuarto, #quinto, #sexto #septimo { width:20%;}
+#primero, #segundo, #tercero, #cuarto, #quinto, #sexto, #septimo, #octavo { display:table-cell;}
+#primero, #segundo, #tercero, #cuarto, #quinto, #sexto, #septimo, #octavo { width:20%;}
 /*#tercero, #cuarto, #quinto, #sexto #septimo{ width:60%;}*/
 
 /*Para el checbox On Off, puede usarse este tambien https://proto.io/freebies/onoff*/
