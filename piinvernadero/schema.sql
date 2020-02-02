@@ -40,15 +40,16 @@ CREATE TABLE sensor (
   site_id INTEGER NOT NULL,
   datatype TEXT NOT NULL,
   unit TEXT NOT NULL,
+  conv INTEGER NOT NULL DEFAULT 1,
   min real NOT NULL,
   max real NOT NULL,
   FOREIGN KEY (site_id) REFERENCES site (id),
   CHECK ( datatype IN ('integer','real','datetime'))
 );
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',1,'real','°C',0,45);
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humidity',1,'real','%',0,100);
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('cTemp',2,'real','°C',0,45);
-INSERT INTO sensor(name,site_id,datatype,unit,min,max) VALUES('humedad',2,'real','%',0,100);
+INSERT INTO sensor(name,site_id,datatype,unit,conv,min,max) VALUES('cTemp',1,'real','°C',1,0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,conv,min,max) VALUES('humidity',1,'real','%',1,0,100);
+INSERT INTO sensor(name,site_id,datatype,unit,conv,min,max) VALUES('cTemp',2,'real','°C',1,0,45);
+INSERT INTO sensor(name,site_id,datatype,unit,conv,min,max) VALUES('humedad',2,'real','%',1,0,100);
 
 CREATE TABLE actuator (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
